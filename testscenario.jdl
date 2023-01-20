@@ -1,0 +1,25 @@
+
+entity User {
+	login String,
+    firstName String,
+    lastName String,
+    email String,
+    activated Boolean,
+    langKey String,
+    imageUrl String
+}
+
+entity TestScenario {
+	title String,
+	status Boolean,
+    message String,
+    reportUrl String,
+    createdBy String,
+    createdDate Instant,
+    lastModifiedBy String,
+    lastModifiedDate Instant
+}
+
+relationship OneToMany {
+	User to TestScenario{user}
+}
