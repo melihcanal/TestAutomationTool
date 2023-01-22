@@ -8,12 +8,12 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IUser } from 'app/shared/model/user.model';
-import { getUsers } from 'app/shared/reducers/user-management';
 import { ITestScenario } from 'app/shared/model/test-scenario.model';
-import { getEntity, updateEntity, createEntity, reset } from './test-scenario.reducer';
+import { getEntities as getTestScenarios } from 'app/entities/test-scenario/test-scenario.reducer';
+import { ITestExecution } from 'app/shared/model/test-execution.model';
+import { getEntity, updateEntity, createEntity, reset } from './test-execution.reducer';
 
-export const TestScenarioUpdate = () => {
+export const TestExecutionUpdate = () => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -21,14 +21,14 @@ export const TestScenarioUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
-  const users = useAppSelector(state => state.userManagement.users);
-  const testScenarioEntity = useAppSelector(state => state.testScenario.entity);
-  const loading = useAppSelector(state => state.testScenario.loading);
-  const updating = useAppSelector(state => state.testScenario.updating);
-  const updateSuccess = useAppSelector(state => state.testScenario.updateSuccess);
+  const testScenarios = useAppSelector(state => state.testScenario.entities);
+  const testExecutionEntity = useAppSelector(state => state.testExecution.entity);
+  const loading = useAppSelector(state => state.testExecution.loading);
+  const updating = useAppSelector(state => state.testExecution.updating);
+  const updateSuccess = useAppSelector(state => state.testExecution.updateSuccess);
 
   const handleClose = () => {
-    navigate('/test-scenario');
+    navigate('/test-execution');
   };
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const TestScenarioUpdate = () => {
       dispatch(getEntity(id));
     }
 
-    dispatch(getUsers({}));
+    dispatch(getTestScenarios({}));
   }, []);
 
   useEffect(() => {
@@ -52,9 +52,9 @@ export const TestScenarioUpdate = () => {
     values.lastModifiedDate = convertDateTimeToServer(values.lastModifiedDate);
 
     const entity = {
-      ...testScenarioEntity,
+      ...testExecutionEntity,
       ...values,
-      user: users.find(it => it.id.toString() === values.user.toString()),
+      testScenario: testScenarios.find(it => it.id.toString() === values.testScenario.toString()),
     };
 
     if (isNew) {
@@ -71,18 +71,18 @@ export const TestScenarioUpdate = () => {
           lastModifiedDate: displayDefaultDateTime(),
         }
       : {
-          ...testScenarioEntity,
-          createdDate: convertDateTimeFromServer(testScenarioEntity.createdDate),
-          lastModifiedDate: convertDateTimeFromServer(testScenarioEntity.lastModifiedDate),
-          user: testScenarioEntity?.user?.id,
+          ...testExecutionEntity,
+          createdDate: convertDateTimeFromServer(testExecutionEntity.createdDate),
+          lastModifiedDate: convertDateTimeFromServer(testExecutionEntity.lastModifiedDate),
+          testScenario: testExecutionEntity?.testScenario?.id,
         };
 
   return (
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="testAutomationToolApp.testScenario.home.createOrEditLabel" data-cy="TestScenarioCreateUpdateHeading">
-            Create or edit a Test Scenario
+          <h2 id="testAutomationToolApp.testExecution.home.createOrEditLabel" data-cy="TestExecutionCreateUpdateHeading">
+            Create or edit a Test Execution
           </h2>
         </Col>
       </Row>
@@ -93,36 +93,15 @@ export const TestScenarioUpdate = () => {
           ) : (
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? (
-                <ValidatedField name="id" required readOnly id="test-scenario-id" label="ID" validate={{ required: true }} />
+                <ValidatedField name="id" required readOnly id="test-execution-id" label="ID" validate={{ required: true }} />
               ) : null}
-              <ValidatedField label="Title" id="test-scenario-title" name="title" data-cy="title" type="text" />
-              <ValidatedField label="Description" id="test-scenario-description" name="description" data-cy="description" type="text" />
-              <ValidatedField label="Test Steps" id="test-scenario-testSteps" name="testSteps" data-cy="testSteps" type="textarea" />
-              <ValidatedField
-                label="Number Of Execution"
-                id="test-scenario-numberOfExecution"
-                name="numberOfExecution"
-                data-cy="numberOfExecution"
-                type="text"
-              />
-              <ValidatedField
-                label="Number Of Passed"
-                id="test-scenario-numberOfPassed"
-                name="numberOfPassed"
-                data-cy="numberOfPassed"
-                type="text"
-              />
-              <ValidatedField
-                label="Number Of Failed"
-                id="test-scenario-numberOfFailed"
-                name="numberOfFailed"
-                data-cy="numberOfFailed"
-                type="text"
-              />
-              <ValidatedField label="Created By" id="test-scenario-createdBy" name="createdBy" data-cy="createdBy" type="text" />
+              <ValidatedField label="Status" id="test-execution-status" name="status" data-cy="status" check type="checkbox" />
+              <ValidatedField label="Message" id="test-execution-message" name="message" data-cy="message" type="text" />
+              <ValidatedField label="Report Url" id="test-execution-reportUrl" name="reportUrl" data-cy="reportUrl" type="text" />
+              <ValidatedField label="Created By" id="test-execution-createdBy" name="createdBy" data-cy="createdBy" type="text" />
               <ValidatedField
                 label="Created Date"
-                id="test-scenario-createdDate"
+                id="test-execution-createdDate"
                 name="createdDate"
                 data-cy="createdDate"
                 type="datetime-local"
@@ -130,30 +109,36 @@ export const TestScenarioUpdate = () => {
               />
               <ValidatedField
                 label="Last Modified By"
-                id="test-scenario-lastModifiedBy"
+                id="test-execution-lastModifiedBy"
                 name="lastModifiedBy"
                 data-cy="lastModifiedBy"
                 type="text"
               />
               <ValidatedField
                 label="Last Modified Date"
-                id="test-scenario-lastModifiedDate"
+                id="test-execution-lastModifiedDate"
                 name="lastModifiedDate"
                 data-cy="lastModifiedDate"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
               />
-              <ValidatedField id="test-scenario-user" name="user" data-cy="user" label="User" type="select">
+              <ValidatedField
+                id="test-execution-testScenario"
+                name="testScenario"
+                data-cy="testScenario"
+                label="Test Scenario"
+                type="select"
+              >
                 <option value="" key="0" />
-                {users
-                  ? users.map(otherEntity => (
+                {testScenarios
+                  ? testScenarios.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
                       </option>
                     ))
                   : null}
               </ValidatedField>
-              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/test-scenario" replace color="info">
+              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/test-execution" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">Back</span>
@@ -171,4 +156,4 @@ export const TestScenarioUpdate = () => {
   );
 };
 
-export default TestScenarioUpdate;
+export default TestExecutionUpdate;

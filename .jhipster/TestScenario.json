@@ -10,16 +10,25 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "status",
-      "fieldType": "Boolean"
-    },
-    {
-      "fieldName": "message",
+      "fieldName": "description",
       "fieldType": "String"
     },
     {
-      "fieldName": "reportUrl",
-      "fieldType": "String"
+      "fieldName": "testSteps",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "numberOfExecution",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "numberOfPassed",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "numberOfFailed",
+      "fieldType": "Long"
     },
     {
       "fieldName": "createdBy",
@@ -44,6 +53,12 @@
   "pagination": "no",
   "readOnly": false,
   "relationships": [
+    {
+      "otherEntityName": "testExecution",
+      "otherEntityRelationshipName": "testScenario",
+      "relationshipName": "testExecution",
+      "relationshipType": "one-to-many"
+    },
     {
       "otherEntityName": "user",
       "otherEntityRelationshipName": "testScenario",

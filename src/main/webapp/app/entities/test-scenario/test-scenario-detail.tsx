@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { TextFormat } from 'react-jhipster';
+import { byteSize, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -33,17 +33,25 @@ export const TestScenarioDetail = () => {
           </dt>
           <dd>{testScenarioEntity.title}</dd>
           <dt>
-            <span id="status">Status</span>
+            <span id="description">Description</span>
           </dt>
-          <dd>{testScenarioEntity.status ? 'true' : 'false'}</dd>
+          <dd>{testScenarioEntity.description}</dd>
           <dt>
-            <span id="message">Message</span>
+            <span id="testSteps">Test Steps</span>
           </dt>
-          <dd>{testScenarioEntity.message}</dd>
+          <dd>{testScenarioEntity.testSteps}</dd>
           <dt>
-            <span id="reportUrl">Report Url</span>
+            <span id="numberOfExecution">Number Of Execution</span>
           </dt>
-          <dd>{testScenarioEntity.reportUrl}</dd>
+          <dd>{testScenarioEntity.numberOfExecution}</dd>
+          <dt>
+            <span id="numberOfPassed">Number Of Passed</span>
+          </dt>
+          <dd>{testScenarioEntity.numberOfPassed}</dd>
+          <dt>
+            <span id="numberOfFailed">Number Of Failed</span>
+          </dt>
+          <dd>{testScenarioEntity.numberOfFailed}</dd>
           <dt>
             <span id="createdBy">Created By</span>
           </dt>

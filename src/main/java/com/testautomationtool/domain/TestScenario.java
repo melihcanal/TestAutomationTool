@@ -1,7 +1,10 @@
 package com.testautomationtool.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -25,19 +28,29 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
     @Column(name = "title")
     private String title;
 
-    @Column(name = "status")
-    private Boolean status;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "message")
-    private String message;
+    @Lob
+    @Column(name = "test_steps")
+    private String testSteps;
 
-    @Column(name = "report_url")
-    private String reportUrl;
+    @Column(name = "number_of_execution")
+    private Long numberOfExecution;
+
+    @Column(name = "number_of_passed")
+    private Long numberOfPassed;
+
+    @Column(name = "number_of_failed")
+    private Long numberOfFailed;
+
+    @OneToMany(mappedBy = "testScenario")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "testScenario" }, allowSetters = true)
+    private Set<TestExecution> testExecutions = new HashSet<>();
 
     @ManyToOne
     private User user;
-
-    // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
         return this.id;
@@ -65,43 +78,69 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         this.title = title;
     }
 
-    public Boolean getStatus() {
-        return this.status;
+    public String getDescription() {
+        return this.description;
     }
 
-    public TestScenario status(Boolean status) {
-        this.setStatus(status);
+    public TestScenario description(String description) {
+        this.setDescription(description);
         return this;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getMessage() {
-        return this.message;
+    public String getTestSteps() {
+        return this.testSteps;
     }
 
-    public TestScenario message(String message) {
-        this.setMessage(message);
+    public TestScenario testSteps(String testSteps) {
+        this.setTestSteps(testSteps);
         return this;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setTestSteps(String testSteps) {
+        this.testSteps = testSteps;
     }
 
-    public String getReportUrl() {
-        return this.reportUrl;
+    public Long getNumberOfExecution() {
+        return this.numberOfExecution;
     }
 
-    public TestScenario reportUrl(String reportUrl) {
-        this.setReportUrl(reportUrl);
+    public TestScenario numberOfExecution(Long numberOfExecution) {
+        this.setNumberOfExecution(numberOfExecution);
         return this;
     }
 
-    public void setReportUrl(String reportUrl) {
-        this.reportUrl = reportUrl;
+    public void setNumberOfExecution(Long numberOfExecution) {
+        this.numberOfExecution = numberOfExecution;
+    }
+
+    public Long getNumberOfPassed() {
+        return this.numberOfPassed;
+    }
+
+    public TestScenario numberOfPassed(Long numberOfPassed) {
+        this.setNumberOfPassed(numberOfPassed);
+        return this;
+    }
+
+    public void setNumberOfPassed(Long numberOfPassed) {
+        this.numberOfPassed = numberOfPassed;
+    }
+
+    public Long getNumberOfFailed() {
+        return this.numberOfFailed;
+    }
+
+    public TestScenario numberOfFailed(Long numberOfFailed) {
+        this.setNumberOfFailed(numberOfFailed);
+        return this;
+    }
+
+    public void setNumberOfFailed(Long numberOfFailed) {
+        this.numberOfFailed = numberOfFailed;
     }
 
     public TestScenario createdBy(String createdBy) {
@@ -124,6 +163,37 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         return this;
     }
 
+    public Set<TestExecution> getTestExecutions() {
+        return this.testExecutions;
+    }
+
+    public void setTestExecutions(Set<TestExecution> testExecutions) {
+        if (this.testExecutions != null) {
+            this.testExecutions.forEach(i -> i.setTestScenario(null));
+        }
+        if (testExecutions != null) {
+            testExecutions.forEach(i -> i.setTestScenario(this));
+        }
+        this.testExecutions = testExecutions;
+    }
+
+    public TestScenario testExecutions(Set<TestExecution> testExecutions) {
+        this.setTestExecutions(testExecutions);
+        return this;
+    }
+
+    public TestScenario addTestExecution(TestExecution testExecution) {
+        this.testExecutions.add(testExecution);
+        testExecution.setTestScenario(this);
+        return this;
+    }
+
+    public TestScenario removeTestExecution(TestExecution testExecution) {
+        this.testExecutions.remove(testExecution);
+        testExecution.setTestScenario(null);
+        return this;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -136,8 +206,6 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         this.setUser(user);
         return this;
     }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -162,9 +230,11 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         return "TestScenario{" +
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
-            ", status='" + getStatus() + "'" +
-            ", message='" + getMessage() + "'" +
-            ", reportUrl='" + getReportUrl() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", testSteps='" + getTestSteps() + "'" +
+            ", numberOfExecution=" + getNumberOfExecution() +
+            ", numberOfPassed=" + getNumberOfPassed() +
+            ", numberOfFailed=" + getNumberOfFailed() +
             ", createdBy='" + getCreatedBy() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastModifiedBy='" + getLastModifiedBy() + "'" +

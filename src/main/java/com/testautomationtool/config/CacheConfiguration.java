@@ -49,6 +49,8 @@ public class CacheConfiguration {
             createCache(cm, com.testautomationtool.domain.Authority.class.getName());
             createCache(cm, com.testautomationtool.domain.User.class.getName() + ".authorities");
             createCache(cm, com.testautomationtool.domain.TestScenario.class.getName());
+            createCache(cm, com.testautomationtool.domain.TestScenario.class.getName() + ".testExecutions");
+            createCache(cm, com.testautomationtool.domain.TestExecution.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

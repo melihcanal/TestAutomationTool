@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
+import { byteSize, Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -48,9 +48,11 @@ export const TestScenario = () => {
               <tr>
                 <th>ID</th>
                 <th>Title</th>
-                <th>Status</th>
-                <th>Message</th>
-                <th>Report Url</th>
+                <th>Description</th>
+                <th>Test Steps</th>
+                <th>Number Of Execution</th>
+                <th>Number Of Passed</th>
+                <th>Number Of Failed</th>
                 <th>Created By</th>
                 <th>Created Date</th>
                 <th>Last Modified By</th>
@@ -68,9 +70,11 @@ export const TestScenario = () => {
                     </Button>
                   </td>
                   <td>{testScenario.title}</td>
-                  <td>{testScenario.status ? 'true' : 'false'}</td>
-                  <td>{testScenario.message}</td>
-                  <td>{testScenario.reportUrl}</td>
+                  <td>{testScenario.description}</td>
+                  <td>{testScenario.testSteps}</td>
+                  <td>{testScenario.numberOfExecution}</td>
+                  <td>{testScenario.numberOfPassed}</td>
+                  <td>{testScenario.numberOfFailed}</td>
                   <td>{testScenario.createdBy}</td>
                   <td>
                     {testScenario.createdDate ? <TextFormat type="date" value={testScenario.createdDate} format={APP_DATE_FORMAT} /> : null}

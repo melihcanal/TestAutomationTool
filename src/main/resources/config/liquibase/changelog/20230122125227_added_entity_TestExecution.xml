@@ -7,29 +7,20 @@
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <!--
-        Added the entity TestScenario.
+        Added the entity TestExecution.
     -->
-    <changeSet id="20230120201129-1" author="jhipster">
-        <createTable tableName="test_scenario">
+    <changeSet id="20230122125227-1" author="jhipster">
+        <createTable tableName="test_execution">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="title" type="varchar(255)">
+            <column name="status" type="boolean">
                 <constraints nullable="true" />
             </column>
-            <column name="description" type="varchar(255)">
+            <column name="message" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="test_steps" type="${clobType}">
-                <constraints nullable="true" />
-            </column>
-            <column name="number_of_execution" type="bigint">
-                <constraints nullable="true" />
-            </column>
-            <column name="number_of_passed" type="bigint">
-                <constraints nullable="true" />
-            </column>
-            <column name="number_of_failed" type="bigint">
+            <column name="report_url" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
             <column name="created_by" type="varchar(255)">
@@ -44,13 +35,13 @@
             <column name="last_modified_date" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
-            <column name="user_id" type="varchar(100)">
+            <column name="test_scenario_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="test_scenario" columnName="created_date" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="test_scenario" columnName="last_modified_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="test_execution" columnName="created_date" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="test_execution" columnName="last_modified_date" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -63,19 +54,16 @@
           This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
           Spring Boot configuration key.
     -->
-    <changeSet id="20230120201129-1-data" author="jhipster" context="faker">
+    <changeSet id="20230122125227-1-data" author="jhipster" context="faker">
         <loadData
-                  file="config/liquibase/fake-data/test_scenario.csv"
+                  file="config/liquibase/fake-data/test_execution.csv"
                   separator=";"
-                  tableName="test_scenario"
+                  tableName="test_execution"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
-            <column name="title" type="string"/>
-            <column name="description" type="string"/>
-            <column name="test_steps" type="clob"/>
-            <column name="number_of_execution" type="numeric"/>
-            <column name="number_of_passed" type="numeric"/>
-            <column name="number_of_failed" type="numeric"/>
+            <column name="status" type="boolean"/>
+            <column name="message" type="string"/>
+            <column name="report_url" type="string"/>
             <column name="created_by" type="string"/>
             <column name="created_date" type="date"/>
             <column name="last_modified_by" type="string"/>

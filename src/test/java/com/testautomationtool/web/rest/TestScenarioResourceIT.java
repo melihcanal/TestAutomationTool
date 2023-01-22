@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 
 /**
  * Integration tests for the {@link TestScenarioResource} REST controller.
@@ -35,14 +36,20 @@ class TestScenarioResourceIT {
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
-    private static final Boolean DEFAULT_STATUS = false;
-    private static final Boolean UPDATED_STATUS = true;
+    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_MESSAGE = "AAAAAAAAAA";
-    private static final String UPDATED_MESSAGE = "BBBBBBBBBB";
+    private static final String DEFAULT_TEST_STEPS = "AAAAAAAAAA";
+    private static final String UPDATED_TEST_STEPS = "BBBBBBBBBB";
 
-    private static final String DEFAULT_REPORT_URL = "AAAAAAAAAA";
-    private static final String UPDATED_REPORT_URL = "BBBBBBBBBB";
+    private static final Long DEFAULT_NUMBER_OF_EXECUTION = 1L;
+    private static final Long UPDATED_NUMBER_OF_EXECUTION = 2L;
+
+    private static final Long DEFAULT_NUMBER_OF_PASSED = 1L;
+    private static final Long UPDATED_NUMBER_OF_PASSED = 2L;
+
+    private static final Long DEFAULT_NUMBER_OF_FAILED = 1L;
+    private static final Long UPDATED_NUMBER_OF_FAILED = 2L;
 
     private static final String DEFAULT_CREATED_BY = "AAAAAAAAAA";
     private static final String UPDATED_CREATED_BY = "BBBBBBBBBB";
@@ -82,9 +89,11 @@ class TestScenarioResourceIT {
     public static TestScenario createEntity(EntityManager em) {
         TestScenario testScenario = new TestScenario()
             .title(DEFAULT_TITLE)
-            .status(DEFAULT_STATUS)
-            .message(DEFAULT_MESSAGE)
-            .reportUrl(DEFAULT_REPORT_URL)
+            .description(DEFAULT_DESCRIPTION)
+            .testSteps(DEFAULT_TEST_STEPS)
+            .numberOfExecution(DEFAULT_NUMBER_OF_EXECUTION)
+            .numberOfPassed(DEFAULT_NUMBER_OF_PASSED)
+            .numberOfFailed(DEFAULT_NUMBER_OF_FAILED)
             .createdBy(DEFAULT_CREATED_BY)
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedBy(DEFAULT_LAST_MODIFIED_BY)
@@ -101,9 +110,11 @@ class TestScenarioResourceIT {
     public static TestScenario createUpdatedEntity(EntityManager em) {
         TestScenario testScenario = new TestScenario()
             .title(UPDATED_TITLE)
-            .status(UPDATED_STATUS)
-            .message(UPDATED_MESSAGE)
-            .reportUrl(UPDATED_REPORT_URL)
+            .description(UPDATED_DESCRIPTION)
+            .testSteps(UPDATED_TEST_STEPS)
+            .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
+            .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
+            .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
             .createdBy(UPDATED_CREATED_BY)
             .createdDate(UPDATED_CREATED_DATE)
             .lastModifiedBy(UPDATED_LAST_MODIFIED_BY)
@@ -135,9 +146,11 @@ class TestScenarioResourceIT {
         assertThat(testScenarioList).hasSize(databaseSizeBeforeCreate + 1);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(DEFAULT_TITLE);
-        assertThat(testTestScenario.getStatus()).isEqualTo(DEFAULT_STATUS);
-        assertThat(testTestScenario.getMessage()).isEqualTo(DEFAULT_MESSAGE);
-        assertThat(testTestScenario.getReportUrl()).isEqualTo(DEFAULT_REPORT_URL);
+        assertThat(testTestScenario.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testTestScenario.getTestSteps()).isEqualTo(DEFAULT_TEST_STEPS);
+        assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(DEFAULT_NUMBER_OF_EXECUTION);
+        assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(DEFAULT_NUMBER_OF_PASSED);
+        assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(DEFAULT_NUMBER_OF_FAILED);
         assertThat(testTestScenario.getCreatedBy()).isEqualTo(DEFAULT_CREATED_BY);
         assertThat(testTestScenario.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
         assertThat(testTestScenario.getLastModifiedBy()).isEqualTo(DEFAULT_LAST_MODIFIED_BY);
@@ -180,9 +193,11 @@ class TestScenarioResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(testScenario.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.booleanValue())))
-            .andExpect(jsonPath("$.[*].message").value(hasItem(DEFAULT_MESSAGE)))
-            .andExpect(jsonPath("$.[*].reportUrl").value(hasItem(DEFAULT_REPORT_URL)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].testSteps").value(hasItem(DEFAULT_TEST_STEPS.toString())))
+            .andExpect(jsonPath("$.[*].numberOfExecution").value(hasItem(DEFAULT_NUMBER_OF_EXECUTION.intValue())))
+            .andExpect(jsonPath("$.[*].numberOfPassed").value(hasItem(DEFAULT_NUMBER_OF_PASSED.intValue())))
+            .andExpect(jsonPath("$.[*].numberOfFailed").value(hasItem(DEFAULT_NUMBER_OF_FAILED.intValue())))
             .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY)))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_DATE.toString())))
             .andExpect(jsonPath("$.[*].lastModifiedBy").value(hasItem(DEFAULT_LAST_MODIFIED_BY)))
@@ -202,9 +217,11 @@ class TestScenarioResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(testScenario.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.booleanValue()))
-            .andExpect(jsonPath("$.message").value(DEFAULT_MESSAGE))
-            .andExpect(jsonPath("$.reportUrl").value(DEFAULT_REPORT_URL))
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
+            .andExpect(jsonPath("$.testSteps").value(DEFAULT_TEST_STEPS.toString()))
+            .andExpect(jsonPath("$.numberOfExecution").value(DEFAULT_NUMBER_OF_EXECUTION.intValue()))
+            .andExpect(jsonPath("$.numberOfPassed").value(DEFAULT_NUMBER_OF_PASSED.intValue()))
+            .andExpect(jsonPath("$.numberOfFailed").value(DEFAULT_NUMBER_OF_FAILED.intValue()))
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY))
             .andExpect(jsonPath("$.createdDate").value(DEFAULT_CREATED_DATE.toString()))
             .andExpect(jsonPath("$.lastModifiedBy").value(DEFAULT_LAST_MODIFIED_BY))
@@ -232,9 +249,11 @@ class TestScenarioResourceIT {
         em.detach(updatedTestScenario);
         updatedTestScenario
             .title(UPDATED_TITLE)
-            .status(UPDATED_STATUS)
-            .message(UPDATED_MESSAGE)
-            .reportUrl(UPDATED_REPORT_URL)
+            .description(UPDATED_DESCRIPTION)
+            .testSteps(UPDATED_TEST_STEPS)
+            .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
+            .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
+            .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
             .createdBy(UPDATED_CREATED_BY)
             .createdDate(UPDATED_CREATED_DATE)
             .lastModifiedBy(UPDATED_LAST_MODIFIED_BY)
@@ -254,9 +273,11 @@ class TestScenarioResourceIT {
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testTestScenario.getStatus()).isEqualTo(UPDATED_STATUS);
-        assertThat(testTestScenario.getMessage()).isEqualTo(UPDATED_MESSAGE);
-        assertThat(testTestScenario.getReportUrl()).isEqualTo(UPDATED_REPORT_URL);
+        assertThat(testTestScenario.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testTestScenario.getTestSteps()).isEqualTo(UPDATED_TEST_STEPS);
+        assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(UPDATED_NUMBER_OF_EXECUTION);
+        assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(UPDATED_NUMBER_OF_PASSED);
+        assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(UPDATED_NUMBER_OF_FAILED);
         assertThat(testTestScenario.getCreatedBy()).isEqualTo(UPDATED_CREATED_BY);
         assertThat(testTestScenario.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
         assertThat(testTestScenario.getLastModifiedBy()).isEqualTo(UPDATED_LAST_MODIFIED_BY);
@@ -340,10 +361,10 @@ class TestScenarioResourceIT {
 
         partialUpdatedTestScenario
             .title(UPDATED_TITLE)
-            .status(UPDATED_STATUS)
-            .reportUrl(UPDATED_REPORT_URL)
-            .createdBy(UPDATED_CREATED_BY)
-            .lastModifiedBy(UPDATED_LAST_MODIFIED_BY);
+            .description(UPDATED_DESCRIPTION)
+            .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
+            .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
+            .createdBy(UPDATED_CREATED_BY);
 
         restTestScenarioMockMvc
             .perform(
@@ -359,12 +380,14 @@ class TestScenarioResourceIT {
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testTestScenario.getStatus()).isEqualTo(UPDATED_STATUS);
-        assertThat(testTestScenario.getMessage()).isEqualTo(DEFAULT_MESSAGE);
-        assertThat(testTestScenario.getReportUrl()).isEqualTo(UPDATED_REPORT_URL);
+        assertThat(testTestScenario.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testTestScenario.getTestSteps()).isEqualTo(DEFAULT_TEST_STEPS);
+        assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(UPDATED_NUMBER_OF_EXECUTION);
+        assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(UPDATED_NUMBER_OF_PASSED);
+        assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(DEFAULT_NUMBER_OF_FAILED);
         assertThat(testTestScenario.getCreatedBy()).isEqualTo(UPDATED_CREATED_BY);
         assertThat(testTestScenario.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testTestScenario.getLastModifiedBy()).isEqualTo(UPDATED_LAST_MODIFIED_BY);
+        assertThat(testTestScenario.getLastModifiedBy()).isEqualTo(DEFAULT_LAST_MODIFIED_BY);
         assertThat(testTestScenario.getLastModifiedDate()).isEqualTo(DEFAULT_LAST_MODIFIED_DATE);
     }
 
@@ -382,9 +405,11 @@ class TestScenarioResourceIT {
 
         partialUpdatedTestScenario
             .title(UPDATED_TITLE)
-            .status(UPDATED_STATUS)
-            .message(UPDATED_MESSAGE)
-            .reportUrl(UPDATED_REPORT_URL)
+            .description(UPDATED_DESCRIPTION)
+            .testSteps(UPDATED_TEST_STEPS)
+            .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
+            .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
+            .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
             .createdBy(UPDATED_CREATED_BY)
             .createdDate(UPDATED_CREATED_DATE)
             .lastModifiedBy(UPDATED_LAST_MODIFIED_BY)
@@ -404,9 +429,11 @@ class TestScenarioResourceIT {
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(UPDATED_TITLE);
-        assertThat(testTestScenario.getStatus()).isEqualTo(UPDATED_STATUS);
-        assertThat(testTestScenario.getMessage()).isEqualTo(UPDATED_MESSAGE);
-        assertThat(testTestScenario.getReportUrl()).isEqualTo(UPDATED_REPORT_URL);
+        assertThat(testTestScenario.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testTestScenario.getTestSteps()).isEqualTo(UPDATED_TEST_STEPS);
+        assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(UPDATED_NUMBER_OF_EXECUTION);
+        assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(UPDATED_NUMBER_OF_PASSED);
+        assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(UPDATED_NUMBER_OF_FAILED);
         assertThat(testTestScenario.getCreatedBy()).isEqualTo(UPDATED_CREATED_BY);
         assertThat(testTestScenario.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
         assertThat(testTestScenario.getLastModifiedBy()).isEqualTo(UPDATED_LAST_MODIFIED_BY);

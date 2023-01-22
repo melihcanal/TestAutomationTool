@@ -1,0 +1,51 @@
+{
+  "applications": "*",
+  "changelogDate": "20230122125227",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "test_execution",
+  "fields": [
+    {
+      "fieldName": "status",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "message",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "reportUrl",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "createdBy",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "createdDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "lastModifiedBy",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastModifiedDate",
+      "fieldType": "Instant"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "TestExecution",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "testScenario",
+      "otherEntityRelationshipName": "testExecution",
+      "relationshipName": "testScenario",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}

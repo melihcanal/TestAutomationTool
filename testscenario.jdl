@@ -11,6 +11,18 @@ entity User {
 
 entity TestScenario {
 	title String,
+    description String,
+    testSteps TextBlob,
+    numberOfExecution Long,
+    numberOfPassed Long,
+    numberOfFailed Long,
+    createdBy String,
+    createdDate Instant,
+    lastModifiedBy String,
+    lastModifiedDate Instant
+}
+
+entity TestExecution {
 	status Boolean,
     message String,
     reportUrl String,
@@ -21,5 +33,6 @@ entity TestScenario {
 }
 
 relationship OneToMany {
-	User to TestScenario{user}
+	User to TestScenario{user},
+    TestScenario to TestExecution{testScenario}
 }

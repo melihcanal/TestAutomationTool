@@ -126,14 +126,20 @@ public class TestScenarioResource {
                 if (testScenario.getTitle() != null) {
                     existingTestScenario.setTitle(testScenario.getTitle());
                 }
-                if (testScenario.getStatus() != null) {
-                    existingTestScenario.setStatus(testScenario.getStatus());
+                if (testScenario.getDescription() != null) {
+                    existingTestScenario.setDescription(testScenario.getDescription());
                 }
-                if (testScenario.getMessage() != null) {
-                    existingTestScenario.setMessage(testScenario.getMessage());
+                if (testScenario.getTestSteps() != null) {
+                    existingTestScenario.setTestSteps(testScenario.getTestSteps());
                 }
-                if (testScenario.getReportUrl() != null) {
-                    existingTestScenario.setReportUrl(testScenario.getReportUrl());
+                if (testScenario.getNumberOfExecution() != null) {
+                    existingTestScenario.setNumberOfExecution(testScenario.getNumberOfExecution());
+                }
+                if (testScenario.getNumberOfPassed() != null) {
+                    existingTestScenario.setNumberOfPassed(testScenario.getNumberOfPassed());
+                }
+                if (testScenario.getNumberOfFailed() != null) {
+                    existingTestScenario.setNumberOfFailed(testScenario.getNumberOfFailed());
                 }
                 if (testScenario.getCreatedBy() != null) {
                     existingTestScenario.setCreatedBy(testScenario.getCreatedBy());
