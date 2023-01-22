@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.testautomationtool.IntegrationTest;
-import com.testautomationtool.config.TestSecurityConfiguration;
 import com.testautomationtool.domain.User;
 import com.testautomationtool.repository.UserRepository;
 import com.testautomationtool.security.AuthoritiesConstants;

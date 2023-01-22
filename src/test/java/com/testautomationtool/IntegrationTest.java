@@ -1,6 +1,5 @@
 package com.testautomationtool;
 
-import com.testautomationtool.TestAutomationToolApp;
 import com.testautomationtool.config.AsyncSyncConfiguration;
 import com.testautomationtool.config.EmbeddedSQL;
 import com.testautomationtool.config.TestSecurityConfiguration;

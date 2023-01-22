@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.testautomationtool.IntegrationTest;
 import com.testautomationtool.config.Constants;
 import com.testautomationtool.domain.User;
-import com.testautomationtool.repository.UserRepository;
 import com.testautomationtool.security.AuthoritiesConstants;
 import com.testautomationtool.service.dto.AdminUserDTO;
 import java.util.Collection;
@@ -15,8 +14,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,9 +40,6 @@ class UserServiceIT {
     private static final String DEFAULT_IMAGEURL = "http://placehold.it/50x50";
 
     private static final String DEFAULT_LANGKEY = "dummy";
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
