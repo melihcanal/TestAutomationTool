@@ -23,6 +23,12 @@ export const getEntities = createAsyncThunk('testScenario/fetch_entity_list', as
   return axios.get<ITestScenario[]>(requestUrl);
 });
 
+export const startWebDriver = createAsyncThunk('testScenario/start_web_driver', async ({ page, size, sort }: IQueryParams) => {
+  console.log('startWebDriver function');
+  const requestUrl = `${apiUrl}/record`;
+  return axios.get<ITestScenario[]>(requestUrl);
+});
+
 export const getEntity = createAsyncThunk(
   'testScenario/fetch_entity',
   async (id: string | number) => {

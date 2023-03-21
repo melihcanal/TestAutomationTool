@@ -2,15 +2,24 @@ package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestScenarioRepository;
+import com.testautomationtool.util.JSFunctions;
+import com.testautomationtool.util.JavascriptInjector;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -173,6 +182,25 @@ public class TestScenarioResource {
     public List<TestScenario> getAllTestScenarios() {
         log.debug("REST request to get all TestScenarios");
         return testScenarioRepository.findAll();
+    }
+
+    @GetMapping("/test-scenarios/record")
+    public ResponseEntity<String> recordTestScenario() {
+        log.debug("Recording test scenario...");
+
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Ameli\\Projects\\TestAutomationTool\\chromedriver.exe");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*");
+        WebDriver webDriver = new ChromeDriver(options);
+        JavascriptExecutor js = (JavascriptExecutor) webDriver;
+        System.out.println("DRIVER OK");
+        webDriver.get("https://www.google.com");
+
+        js.executeScript(JSFunctions.setSessionVariables);
+        JavascriptInjector injector = new JavascriptInjector(js);
+        injector.start();
+
+        return new ResponseEntity<String>("testResult", HttpStatus.OK);
     }
 
     /**
