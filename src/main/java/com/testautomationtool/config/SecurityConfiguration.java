@@ -114,7 +114,7 @@ public class SecurityConfiguration {
      * Map authorities from "groups" or "roles" claim in ID Token.
      *
      * @return a {@link GrantedAuthoritiesMapper} that maps groups from
-     * the IdP to Spring Security Authorities.
+     *         the IdP to Spring Security Authorities.
      */
     @Bean
     public GrantedAuthoritiesMapper userAuthoritiesMapper() {

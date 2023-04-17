@@ -2,18 +2,18 @@ package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestScenarioRepository;
-import com.testautomationtool.util.JSFunctions;
+import com.testautomationtool.util.FileOperations;
 import com.testautomationtool.util.JavascriptInjector;
+import com.testautomationtool.util.ReadData;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
@@ -37,6 +37,10 @@ public class TestScenarioResource {
     private final Logger log = LoggerFactory.getLogger(TestScenarioResource.class);
 
     private static final String ENTITY_NAME = "testScenario";
+
+    private final Map<String, String> jsFunctions = ReadData.readJsFunctions();
+
+    private WebDriver webDriver;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -184,23 +188,48 @@ public class TestScenarioResource {
         return testScenarioRepository.findAll();
     }
 
-    @GetMapping("/test-scenarios/record")
-    public ResponseEntity<String> recordTestScenario() {
+    @GetMapping("/test-scenarios/record-start")
+    public ResponseEntity<String> startRecordingTestScenario() {
         log.debug("Recording test scenario...");
+        FileOperations.removeJsonFile();
 
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Ameli\\Projects\\TestAutomationTool\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
-        WebDriver webDriver = new ChromeDriver(options);
+        webDriver = new ChromeDriver(options);
         JavascriptExecutor js = (JavascriptExecutor) webDriver;
         System.out.println("DRIVER OK");
         webDriver.get("https://www.google.com");
 
-        js.executeScript(JSFunctions.setSessionVariables);
-        JavascriptInjector injector = new JavascriptInjector(js);
+        js.executeScript(jsFunctions.get("setSessionVariables"));
+        JavascriptInjector injector = new JavascriptInjector(js, webDriver, jsFunctions);
         injector.start();
 
         return new ResponseEntity<String>("testResult", HttpStatus.OK);
+    }
+
+    @GetMapping("/test-scenarios/record-stop")
+    public ResponseEntity<String> stopRecordingTestScenario() {
+        log.debug("Stopping to record test scenario...");
+
+        JavascriptExecutor js = (JavascriptExecutor) webDriver;
+        js.executeScript(jsFunctions.get("stopRecordingTestScenario"));
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        webDriver.close();
+
+        String fileContent = FileOperations.completeFileOperations();
+        // download'a gelen dosyayi resources altina kopyala
+
+        // surekli resource altinda dosya olusmus mu diye request at
+
+        // record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
+
+        return new ResponseEntity<String>(fileContent, HttpStatus.OK);
     }
 
     /**

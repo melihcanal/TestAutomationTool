@@ -7,16 +7,21 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
-import { startWebDriver } from './test-scenario.reducer';
+import { startWebDriver, stopWebDriver } from './test-scenario.reducer';
 import { useAppDispatch } from 'app/config/store';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  const startRecording = () => {
     console.log('record useEffect');
     dispatch(startWebDriver({}));
-  }, []);
+  };
+
+  const stopRecording = () => {
+    console.log('record useEffect');
+    dispatch(stopWebDriver({}));
+  };
 
   const list = [
     'Navigate to the https://google.com',
@@ -31,8 +36,12 @@ export const TestScenarioRecord = () => {
   return (
     <div>
       <Stack direction="row" alignItems="center" spacing={2}>
-        <Button variant="contained" component="label">
+        <Button variant="contained" component="label" onClick={startRecording}>
           Start Recording
+          <input hidden accept="image/*" multiple type="file" />
+        </Button>
+        <Button variant="outlined" component="label" onClick={stopRecording}>
+          Stop Recording
           <input hidden accept="image/*" multiple type="file" />
         </Button>
       </Stack>

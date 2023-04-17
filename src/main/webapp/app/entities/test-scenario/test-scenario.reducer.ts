@@ -25,8 +25,14 @@ export const getEntities = createAsyncThunk('testScenario/fetch_entity_list', as
 
 export const startWebDriver = createAsyncThunk('testScenario/start_web_driver', async ({ page, size, sort }: IQueryParams) => {
   console.log('startWebDriver function');
-  const requestUrl = `${apiUrl}/record`;
-  return axios.get<ITestScenario[]>(requestUrl);
+  const requestUrl = `${apiUrl}/record-start`;
+  return axios.get<String>(requestUrl);
+});
+
+export const stopWebDriver = createAsyncThunk('testScenario/stop_web_driver', async ({ page, size, sort }: IQueryParams) => {
+  console.log('stopWebDriver function');
+  const requestUrl = `${apiUrl}/record-stop`;
+  return axios.get<String>(requestUrl);
 });
 
 export const getEntity = createAsyncThunk(
