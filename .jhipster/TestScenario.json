@@ -14,11 +14,6 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "testSteps",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "text"
-    },
-    {
       "fieldName": "numberOfExecution",
       "fieldType": "Long"
     },
@@ -57,6 +52,12 @@
       "otherEntityName": "testExecution",
       "otherEntityRelationshipName": "testScenario",
       "relationshipName": "testExecution",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "stepDefinition",
+      "otherEntityRelationshipName": "testScenario",
+      "relationshipName": "stepDefinition",
       "relationshipType": "one-to-many"
     },
     {

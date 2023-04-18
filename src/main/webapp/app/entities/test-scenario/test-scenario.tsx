@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { byteSize, Translate, TextFormat } from 'react-jhipster';
+import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ITestScenario } from 'app/shared/model/test-scenario.model';
 import { getEntities } from './test-scenario.reducer';
 
 export const TestScenario = () => {
@@ -49,7 +48,6 @@ export const TestScenario = () => {
                 <th>ID</th>
                 <th>Title</th>
                 <th>Description</th>
-                <th>Test Steps</th>
                 <th>Number Of Execution</th>
                 <th>Number Of Passed</th>
                 <th>Number Of Failed</th>
@@ -71,7 +69,6 @@ export const TestScenario = () => {
                   </td>
                   <td>{testScenario.title}</td>
                   <td>{testScenario.description}</td>
-                  <td>{testScenario.testSteps}</td>
                   <td>{testScenario.numberOfExecution}</td>
                   <td>{testScenario.numberOfPassed}</td>
                   <td>{testScenario.numberOfFailed}</td>

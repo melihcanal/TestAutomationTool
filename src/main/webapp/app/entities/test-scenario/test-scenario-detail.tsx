@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { byteSize, TextFormat } from 'react-jhipster';
+import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
@@ -36,10 +36,6 @@ export const TestScenarioDetail = () => {
             <span id="description">Description</span>
           </dt>
           <dd>{testScenarioEntity.description}</dd>
-          <dt>
-            <span id="testSteps">Test Steps</span>
-          </dt>
-          <dd>{testScenarioEntity.testSteps}</dd>
           <dt>
             <span id="numberOfExecution">Number Of Execution</span>
           </dt>

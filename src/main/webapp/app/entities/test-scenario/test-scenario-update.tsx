@@ -97,7 +97,6 @@ export const TestScenarioUpdate = () => {
               ) : null}
               <ValidatedField label="Title" id="test-scenario-title" name="title" data-cy="title" type="text" />
               <ValidatedField label="Description" id="test-scenario-description" name="description" data-cy="description" type="text" />
-              <ValidatedField label="Test Steps" id="test-scenario-testSteps" name="testSteps" data-cy="testSteps" type="textarea" />
               <ValidatedField
                 label="Number Of Execution"
                 id="test-scenario-numberOfExecution"

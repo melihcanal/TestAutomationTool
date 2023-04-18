@@ -142,9 +142,6 @@ public class TestScenarioResource {
                 if (testScenario.getDescription() != null) {
                     existingTestScenario.setDescription(testScenario.getDescription());
                 }
-                if (testScenario.getTestSteps() != null) {
-                    existingTestScenario.setTestSteps(testScenario.getTestSteps());
-                }
                 if (testScenario.getNumberOfExecution() != null) {
                     existingTestScenario.setNumberOfExecution(testScenario.getNumberOfExecution());
                 }

@@ -38,9 +38,6 @@ class TestScenarioResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_TEST_STEPS = "AAAAAAAAAA";
-    private static final String UPDATED_TEST_STEPS = "BBBBBBBBBB";
-
     private static final Long DEFAULT_NUMBER_OF_EXECUTION = 1L;
     private static final Long UPDATED_NUMBER_OF_EXECUTION = 2L;
 
@@ -89,7 +86,6 @@ class TestScenarioResourceIT {
         TestScenario testScenario = new TestScenario()
             .title(DEFAULT_TITLE)
             .description(DEFAULT_DESCRIPTION)
-            .testSteps(DEFAULT_TEST_STEPS)
             .numberOfExecution(DEFAULT_NUMBER_OF_EXECUTION)
             .numberOfPassed(DEFAULT_NUMBER_OF_PASSED)
             .numberOfFailed(DEFAULT_NUMBER_OF_FAILED)
@@ -110,7 +106,6 @@ class TestScenarioResourceIT {
         TestScenario testScenario = new TestScenario()
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
-            .testSteps(UPDATED_TEST_STEPS)
             .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
             .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
             .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
@@ -146,7 +141,6 @@ class TestScenarioResourceIT {
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testTestScenario.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testTestScenario.getTestSteps()).isEqualTo(DEFAULT_TEST_STEPS);
         assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(DEFAULT_NUMBER_OF_EXECUTION);
         assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(DEFAULT_NUMBER_OF_PASSED);
         assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(DEFAULT_NUMBER_OF_FAILED);
@@ -193,7 +187,6 @@ class TestScenarioResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(testScenario.getId().intValue())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].testSteps").value(hasItem(DEFAULT_TEST_STEPS.toString())))
             .andExpect(jsonPath("$.[*].numberOfExecution").value(hasItem(DEFAULT_NUMBER_OF_EXECUTION.intValue())))
             .andExpect(jsonPath("$.[*].numberOfPassed").value(hasItem(DEFAULT_NUMBER_OF_PASSED.intValue())))
             .andExpect(jsonPath("$.[*].numberOfFailed").value(hasItem(DEFAULT_NUMBER_OF_FAILED.intValue())))
@@ -217,7 +210,6 @@ class TestScenarioResourceIT {
             .andExpect(jsonPath("$.id").value(testScenario.getId().intValue()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
-            .andExpect(jsonPath("$.testSteps").value(DEFAULT_TEST_STEPS.toString()))
             .andExpect(jsonPath("$.numberOfExecution").value(DEFAULT_NUMBER_OF_EXECUTION.intValue()))
             .andExpect(jsonPath("$.numberOfPassed").value(DEFAULT_NUMBER_OF_PASSED.intValue()))
             .andExpect(jsonPath("$.numberOfFailed").value(DEFAULT_NUMBER_OF_FAILED.intValue()))
@@ -249,7 +241,6 @@ class TestScenarioResourceIT {
         updatedTestScenario
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
-            .testSteps(UPDATED_TEST_STEPS)
             .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
             .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
             .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
@@ -273,7 +264,6 @@ class TestScenarioResourceIT {
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testTestScenario.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testTestScenario.getTestSteps()).isEqualTo(UPDATED_TEST_STEPS);
         assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(UPDATED_NUMBER_OF_EXECUTION);
         assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(UPDATED_NUMBER_OF_PASSED);
         assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(UPDATED_NUMBER_OF_FAILED);
@@ -361,9 +351,9 @@ class TestScenarioResourceIT {
         partialUpdatedTestScenario
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
-            .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
             .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
-            .createdBy(UPDATED_CREATED_BY);
+            .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
+            .createdDate(UPDATED_CREATED_DATE);
 
         restTestScenarioMockMvc
             .perform(
@@ -380,12 +370,11 @@ class TestScenarioResourceIT {
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testTestScenario.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testTestScenario.getTestSteps()).isEqualTo(DEFAULT_TEST_STEPS);
-        assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(UPDATED_NUMBER_OF_EXECUTION);
+        assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(DEFAULT_NUMBER_OF_EXECUTION);
         assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(UPDATED_NUMBER_OF_PASSED);
-        assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(DEFAULT_NUMBER_OF_FAILED);
-        assertThat(testTestScenario.getCreatedBy()).isEqualTo(UPDATED_CREATED_BY);
-        assertThat(testTestScenario.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(UPDATED_NUMBER_OF_FAILED);
+        assertThat(testTestScenario.getCreatedBy()).isEqualTo(DEFAULT_CREATED_BY);
+        assertThat(testTestScenario.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
         assertThat(testTestScenario.getLastModifiedBy()).isEqualTo(DEFAULT_LAST_MODIFIED_BY);
         assertThat(testTestScenario.getLastModifiedDate()).isEqualTo(DEFAULT_LAST_MODIFIED_DATE);
     }
@@ -405,7 +394,6 @@ class TestScenarioResourceIT {
         partialUpdatedTestScenario
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
-            .testSteps(UPDATED_TEST_STEPS)
             .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
             .numberOfPassed(UPDATED_NUMBER_OF_PASSED)
             .numberOfFailed(UPDATED_NUMBER_OF_FAILED)
@@ -429,7 +417,6 @@ class TestScenarioResourceIT {
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
         assertThat(testTestScenario.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testTestScenario.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testTestScenario.getTestSteps()).isEqualTo(UPDATED_TEST_STEPS);
         assertThat(testTestScenario.getNumberOfExecution()).isEqualTo(UPDATED_NUMBER_OF_EXECUTION);
         assertThat(testTestScenario.getNumberOfPassed()).isEqualTo(UPDATED_NUMBER_OF_PASSED);
         assertThat(testTestScenario.getNumberOfFailed()).isEqualTo(UPDATED_NUMBER_OF_FAILED);

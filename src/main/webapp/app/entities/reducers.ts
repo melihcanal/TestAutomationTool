@@ -1,11 +1,11 @@
 import testScenario from 'app/entities/test-scenario/test-scenario.reducer';
 import testExecution from 'app/entities/test-execution/test-execution.reducer';
-/* jhipster-needle-add-reducer-import - JHipster will add reducer here */
+import stepDefinition from 'app/entities/step-definition/step-definition.reducer';
 
 const entitiesReducers = {
   testScenario,
   testExecution,
-  /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
+  stepDefinition,
 };
 
 export default entitiesReducers;

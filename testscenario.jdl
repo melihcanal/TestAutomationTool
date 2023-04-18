@@ -12,7 +12,6 @@ entity User {
 entity TestScenario {
 	title String,
     description String,
-    testSteps TextBlob,
     numberOfExecution Long,
     numberOfPassed Long,
     numberOfFailed Long,
@@ -32,7 +31,36 @@ entity TestExecution {
     lastModifiedDate Instant
 }
 
+enum ActionType {
+    CLICK,
+    SEND_KEYS,
+    SEARCH,
+    SCROLL,
+    NAVIGATE_TO,
+    NAVIGATE_BACK,
+    NAVIGATE_FORWARD,
+    NAVIGATE_REFRESH,
+    ASSERT_EQUALS,
+    ASSERT_THAT
+}
+
+entity StepDefinition {
+    actionType ActionType,
+    message String,
+    xpathOrCssSelector String,
+    keyword String,
+    scrollLeft Integer,
+    scrollTop Integer,
+    url String,
+    expected String,
+    createdBy String,
+    createdDate Instant,
+    lastModifiedBy String,
+    lastModifiedDate Instant
+}
+
 relationship OneToMany {
-	User to TestScenario{user},
-    TestScenario to TestExecution{testScenario}
+    User to TestScenario,
+    TestScenario to TestExecution,
+    TestScenario to StepDefinition
 }

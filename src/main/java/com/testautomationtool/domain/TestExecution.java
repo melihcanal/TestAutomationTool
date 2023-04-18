@@ -33,7 +33,7 @@ public class TestExecution extends AbstractAuditingEntity<Long> implements Seria
     private String reportUrl;
 
     @ManyToOne
-    @JsonIgnoreProperties(value = { "testExecutions", "user" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "testExecutions", "stepDefinitions", "user" }, allowSetters = true)
     private TestScenario testScenario;
 
     public Long getId() {
@@ -134,22 +134,37 @@ public class TestExecution extends AbstractAuditingEntity<Long> implements Seria
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "TestExecution{" +
-            "id=" + getId() +
-            ", status='" + getStatus() + "'" +
-            ", message='" + getMessage() + "'" +
-            ", reportUrl='" + getReportUrl() + "'" +
-            ", createdBy='" + getCreatedBy() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", lastModifiedBy='" + getLastModifiedBy() + "'" +
-            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
-            "}";
+        return (
+            "TestExecution{" +
+            "id=" +
+            getId() +
+            ", status='" +
+            getStatus() +
+            "'" +
+            ", message='" +
+            getMessage() +
+            "'" +
+            ", reportUrl='" +
+            getReportUrl() +
+            "'" +
+            ", createdBy='" +
+            getCreatedBy() +
+            "'" +
+            ", createdDate='" +
+            getCreatedDate() +
+            "'" +
+            ", lastModifiedBy='" +
+            getLastModifiedBy() +
+            "'" +
+            ", lastModifiedDate='" +
+            getLastModifiedDate() +
+            "'" +
+            "}"
+        );
     }
 }

@@ -31,10 +31,6 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
     @Column(name = "description")
     private String description;
 
-    @Lob
-    @Column(name = "test_steps")
-    private String testSteps;
-
     @Column(name = "number_of_execution")
     private Long numberOfExecution;
 
@@ -48,6 +44,11 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "testScenario" }, allowSetters = true)
     private Set<TestExecution> testExecutions = new HashSet<>();
+
+    @OneToMany(mappedBy = "testScenario")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "testScenario" }, allowSetters = true)
+    private Set<StepDefinition> stepDefinitions = new HashSet<>();
 
     @ManyToOne
     private User user;
@@ -89,19 +90,6 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getTestSteps() {
-        return this.testSteps;
-    }
-
-    public TestScenario testSteps(String testSteps) {
-        this.setTestSteps(testSteps);
-        return this;
-    }
-
-    public void setTestSteps(String testSteps) {
-        this.testSteps = testSteps;
     }
 
     public Long getNumberOfExecution() {
@@ -194,6 +182,37 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         return this;
     }
 
+    public Set<StepDefinition> getStepDefinitions() {
+        return this.stepDefinitions;
+    }
+
+    public void setStepDefinitions(Set<StepDefinition> stepDefinitions) {
+        if (this.stepDefinitions != null) {
+            this.stepDefinitions.forEach(i -> i.setTestScenario(null));
+        }
+        if (stepDefinitions != null) {
+            stepDefinitions.forEach(i -> i.setTestScenario(this));
+        }
+        this.stepDefinitions = stepDefinitions;
+    }
+
+    public TestScenario stepDefinitions(Set<StepDefinition> stepDefinitions) {
+        this.setStepDefinitions(stepDefinitions);
+        return this;
+    }
+
+    public TestScenario addStepDefinition(StepDefinition stepDefinition) {
+        this.stepDefinitions.add(stepDefinition);
+        stepDefinition.setTestScenario(this);
+        return this;
+    }
+
+    public TestScenario removeStepDefinition(StepDefinition stepDefinition) {
+        this.stepDefinitions.remove(stepDefinition);
+        stepDefinition.setTestScenario(null);
+        return this;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -220,25 +239,40 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "TestScenario{" +
-            "id=" + getId() +
-            ", title='" + getTitle() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", testSteps='" + getTestSteps() + "'" +
-            ", numberOfExecution=" + getNumberOfExecution() +
-            ", numberOfPassed=" + getNumberOfPassed() +
-            ", numberOfFailed=" + getNumberOfFailed() +
-            ", createdBy='" + getCreatedBy() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            ", lastModifiedBy='" + getLastModifiedBy() + "'" +
-            ", lastModifiedDate='" + getLastModifiedDate() + "'" +
-            "}";
+        return (
+            "TestScenario{" +
+            "id=" +
+            getId() +
+            ", title='" +
+            getTitle() +
+            "'" +
+            ", description='" +
+            getDescription() +
+            "'" +
+            ", numberOfExecution=" +
+            getNumberOfExecution() +
+            ", numberOfPassed=" +
+            getNumberOfPassed() +
+            ", numberOfFailed=" +
+            getNumberOfFailed() +
+            ", createdBy='" +
+            getCreatedBy() +
+            "'" +
+            ", createdDate='" +
+            getCreatedDate() +
+            "'" +
+            ", lastModifiedBy='" +
+            getLastModifiedBy() +
+            "'" +
+            ", lastModifiedDate='" +
+            getLastModifiedDate() +
+            "'" +
+            "}"
+        );
     }
 }

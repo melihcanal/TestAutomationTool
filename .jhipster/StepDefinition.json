@@ -1,0 +1,72 @@
+{
+  "applications": "*",
+  "changelogDate": "20230417225909",
+  "dto": "no",
+  "embedded": false,
+  "entityTableName": "step_definition",
+  "fields": [
+    {
+      "fieldName": "actionType",
+      "fieldType": "ActionType",
+      "fieldValues": "CLICK,SEND_KEYS,SEARCH,SCROLL,NAVIGATE_TO,NAVIGATE_BACK,NAVIGATE_FORWARD,NAVIGATE_REFRESH,ASSERT_EQUALS,ASSERT_THAT"
+    },
+    {
+      "fieldName": "message",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "xpathOrCssSelector",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "keyword",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "scrollLeft",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "scrollTop",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "url",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "expected",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "createdBy",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "createdDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "lastModifiedBy",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastModifiedDate",
+      "fieldType": "Instant"
+    }
+  ],
+  "fluentMethods": true,
+  "jpaMetamodelFiltering": false,
+  "name": "StepDefinition",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityName": "testScenario",
+      "otherEntityRelationshipName": "stepDefinition",
+      "relationshipName": "testScenario",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "no"
+}
