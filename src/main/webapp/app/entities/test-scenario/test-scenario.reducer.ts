@@ -4,6 +4,7 @@ import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/t
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { ITestScenario, defaultValue } from 'app/shared/model/test-scenario.model';
+import { IStepDefinition } from 'app/shared/model/step-definition.model';
 
 const initialState: EntityState<ITestScenario> = {
   loading: false,
@@ -32,7 +33,7 @@ export const startWebDriver = createAsyncThunk('testScenario/start_web_driver', 
 export const stopWebDriver = createAsyncThunk('testScenario/stop_web_driver', async ({ page, size, sort }: IQueryParams) => {
   console.log('stopWebDriver function');
   const requestUrl = `${apiUrl}/record-stop`;
-  return axios.get<String>(requestUrl);
+  return axios.get<IStepDefinition[]>(requestUrl);
 });
 
 export const getEntity = createAsyncThunk(

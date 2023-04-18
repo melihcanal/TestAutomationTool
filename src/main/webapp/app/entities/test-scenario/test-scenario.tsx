@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,9 +11,6 @@ import { getEntities } from './test-scenario.reducer';
 
 export const TestScenario = () => {
   const dispatch = useAppDispatch();
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const testScenarioList = useAppSelector(state => state.testScenario.entities);
   const loading = useAppSelector(state => state.testScenario.loading);

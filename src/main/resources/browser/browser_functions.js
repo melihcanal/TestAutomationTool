@@ -80,11 +80,12 @@ const getElementByXpath = xpath => {
 };
 
 //stopRecordingTestScenario
-const stopRecordingTestScenario = () => {
+(function () {
   events.forEach(e => delete e.nodeName);
   console.save(JSON.stringify(events, null, 4));
   events = [];
-};
+  console.log('stopRecordingTestScenario js function');
+})();
 
 //windowListeners
 let scrollTop = undefined;

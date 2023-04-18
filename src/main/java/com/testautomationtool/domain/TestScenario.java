@@ -3,7 +3,9 @@ package com.testautomationtool.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import org.hibernate.annotations.Cache;
@@ -48,7 +50,7 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
     @OneToMany(mappedBy = "testScenario")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "testScenario" }, allowSetters = true)
-    private Set<StepDefinition> stepDefinitions = new HashSet<>();
+    private List<StepDefinition> stepDefinitions = new ArrayList<>();
 
     @ManyToOne
     private User user;
@@ -182,11 +184,11 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         return this;
     }
 
-    public Set<StepDefinition> getStepDefinitions() {
+    public List<StepDefinition> getStepDefinitions() {
         return this.stepDefinitions;
     }
 
-    public void setStepDefinitions(Set<StepDefinition> stepDefinitions) {
+    public void setStepDefinitions(List<StepDefinition> stepDefinitions) {
         if (this.stepDefinitions != null) {
             this.stepDefinitions.forEach(i -> i.setTestScenario(null));
         }
@@ -196,7 +198,7 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
         this.stepDefinitions = stepDefinitions;
     }
 
-    public TestScenario stepDefinitions(Set<StepDefinition> stepDefinitions) {
+    public TestScenario stepDefinitions(List<StepDefinition> stepDefinitions) {
         this.setStepDefinitions(stepDefinitions);
         return this;
     }

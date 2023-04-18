@@ -8,6 +8,8 @@ public enum ActionType {
     SEND_KEYS,
     SEARCH,
     SCROLL,
+    HOVER,
+    GO_TO_URL,
     NAVIGATE_TO,
     NAVIGATE_BACK,
     NAVIGATE_FORWARD,

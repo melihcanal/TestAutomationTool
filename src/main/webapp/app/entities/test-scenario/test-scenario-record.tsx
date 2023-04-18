@@ -8,19 +8,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import { startWebDriver, stopWebDriver } from './test-scenario.reducer';
-import { useAppDispatch } from 'app/config/store';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
 
+  const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
+
   const startRecording = () => {
-    console.log('record useEffect');
+    console.log('Button: Start Recording');
     dispatch(startWebDriver({}));
   };
 
-  const stopRecording = () => {
-    console.log('record useEffect');
-    dispatch(stopWebDriver({}));
+  const stopRecording = async () => {
+    console.log('Button: Stop Recording');
+    await dispatch(stopWebDriver({}));
+    console.log(stepDefinitionList);
   };
 
   const list = [

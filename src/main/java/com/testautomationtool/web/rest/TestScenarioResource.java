@@ -1,5 +1,6 @@
 package com.testautomationtool.web.rest;
 
+import com.testautomationtool.domain.StepDefinition;
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestScenarioRepository;
 import com.testautomationtool.util.FileOperations;
@@ -190,14 +191,18 @@ public class TestScenarioResource {
         log.debug("Recording test scenario...");
         FileOperations.removeJsonFile();
 
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Ameli\\Projects\\TestAutomationTool\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/browser/chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         webDriver = new ChromeDriver(options);
         JavascriptExecutor js = (JavascriptExecutor) webDriver;
         System.out.println("DRIVER OK");
         webDriver.get("https://www.google.com");
-
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         js.executeScript(jsFunctions.get("setSessionVariables"));
         JavascriptInjector injector = new JavascriptInjector(js, webDriver, jsFunctions);
         injector.start();
@@ -206,27 +211,19 @@ public class TestScenarioResource {
     }
 
     @GetMapping("/test-scenarios/record-stop")
-    public ResponseEntity<String> stopRecordingTestScenario() {
+    public ResponseEntity<List<StepDefinition>> stopRecordingTestScenario() {
         log.debug("Stopping to record test scenario...");
 
         JavascriptExecutor js = (JavascriptExecutor) webDriver;
         js.executeScript(jsFunctions.get("stopRecordingTestScenario"));
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
         webDriver.close();
 
-        String fileContent = FileOperations.completeFileOperations();
-        // download'a gelen dosyayi resources altina kopyala
-
-        // surekli resource altinda dosya olusmus mu diye request at
+        List<StepDefinition> fileContent = FileOperations.completeFileOperations();
 
         // record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
 
-        return new ResponseEntity<String>(fileContent, HttpStatus.OK);
+        return new ResponseEntity<List<StepDefinition>>(fileContent, HttpStatus.OK);
     }
 
     /**
