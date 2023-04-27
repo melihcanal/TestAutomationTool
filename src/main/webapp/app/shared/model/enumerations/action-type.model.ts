@@ -7,6 +7,8 @@ export enum ActionType {
 
   SCROLL = 'SCROLL',
 
+  HOVER = 'HOVER',
+
   NAVIGATE_TO = 'NAVIGATE_TO',
 
   NAVIGATE_BACK = 'NAVIGATE_BACK',

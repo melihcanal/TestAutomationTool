@@ -1,6 +1,7 @@
 package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.TestExecution;
+import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestExecutionRepository;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
@@ -164,6 +165,12 @@ public class TestExecutionResource {
     public List<TestExecution> getAllTestExecutions() {
         log.debug("REST request to get all TestExecutions");
         return testExecutionRepository.findAll();
+    }
+
+    @PostMapping("/test-executions/find-by-test-scenario")
+    public List<TestExecution> getTestExecutionsByTestScenario(@RequestBody TestScenario testScenario) {
+        log.debug("REST request to get TestExecution by TestScenario");
+        return testExecutionRepository.findByTestScenario(testScenario);
     }
 
     /**

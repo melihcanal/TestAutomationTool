@@ -1,0 +1,11 @@
+[
+  {
+    "actionType": "GO_TO_URL",
+    "url": "https://tr.motorsport.com/"
+  },
+  {
+    "actionType": "SCROLL",
+    "scrollLeft": 0,
+    "scrollTop": 500
+  }
+]

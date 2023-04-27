@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { ITestScenario, defaultValue } from 'app/shared/model/test-scenario.model';
-import { IStepDefinition } from 'app/shared/model/step-definition.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, ITestScenario } from 'app/shared/model/test-scenario.model';
 
 const initialState: EntityState<ITestScenario> = {
   loading: false,
@@ -22,18 +21,6 @@ const apiUrl = 'api/test-scenarios';
 export const getEntities = createAsyncThunk('testScenario/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
   return axios.get<ITestScenario[]>(requestUrl);
-});
-
-export const startWebDriver = createAsyncThunk('testScenario/start_web_driver', async ({ page, size, sort }: IQueryParams) => {
-  console.log('startWebDriver function');
-  const requestUrl = `${apiUrl}/record-start`;
-  return axios.get<String>(requestUrl);
-});
-
-export const stopWebDriver = createAsyncThunk('testScenario/stop_web_driver', async ({ page, size, sort }: IQueryParams) => {
-  console.log('stopWebDriver function');
-  const requestUrl = `${apiUrl}/record-stop`;
-  return axios.get<IStepDefinition[]>(requestUrl);
 });
 
 export const getEntity = createAsyncThunk(

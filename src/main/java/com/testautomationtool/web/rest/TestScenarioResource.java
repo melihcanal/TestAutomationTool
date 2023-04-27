@@ -1,26 +1,16 @@
 package com.testautomationtool.web.rest;
 
-import com.testautomationtool.domain.StepDefinition;
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestScenarioRepository;
-import com.testautomationtool.util.FileOperations;
-import com.testautomationtool.util.JavascriptInjector;
-import com.testautomationtool.util.ReadData;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +28,6 @@ public class TestScenarioResource {
     private final Logger log = LoggerFactory.getLogger(TestScenarioResource.class);
 
     private static final String ENTITY_NAME = "testScenario";
-
-    private final Map<String, String> jsFunctions = ReadData.readJsFunctions();
-
-    private WebDriver webDriver;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -75,7 +61,7 @@ public class TestScenarioResource {
     /**
      * {@code PUT  /test-scenarios/:id} : Updates an existing testScenario.
      *
-     * @param id the id of the testScenario to save.
+     * @param id           the id of the testScenario to save.
      * @param testScenario the testScenario to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated testScenario,
      * or with status {@code 400 (Bad Request)} if the testScenario is not valid,
@@ -109,7 +95,7 @@ public class TestScenarioResource {
     /**
      * {@code PATCH  /test-scenarios/:id} : Partial updates given fields of an existing testScenario, field will ignore if it is null
      *
-     * @param id the id of the testScenario to save.
+     * @param id           the id of the testScenario to save.
      * @param testScenario the testScenario to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated testScenario,
      * or with status {@code 400 (Bad Request)} if the testScenario is not valid,
@@ -184,46 +170,6 @@ public class TestScenarioResource {
     public List<TestScenario> getAllTestScenarios() {
         log.debug("REST request to get all TestScenarios");
         return testScenarioRepository.findAll();
-    }
-
-    @GetMapping("/test-scenarios/record-start")
-    public ResponseEntity<String> startRecordingTestScenario() {
-        log.debug("Recording test scenario...");
-        FileOperations.removeJsonFile();
-
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/browser/chromedriver.exe");
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
-        webDriver = new ChromeDriver(options);
-        JavascriptExecutor js = (JavascriptExecutor) webDriver;
-        System.out.println("DRIVER OK");
-        webDriver.get("https://www.google.com");
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        js.executeScript(jsFunctions.get("setSessionVariables"));
-        JavascriptInjector injector = new JavascriptInjector(js, webDriver, jsFunctions);
-        injector.start();
-
-        return new ResponseEntity<String>("testResult", HttpStatus.OK);
-    }
-
-    @GetMapping("/test-scenarios/record-stop")
-    public ResponseEntity<List<StepDefinition>> stopRecordingTestScenario() {
-        log.debug("Stopping to record test scenario...");
-
-        JavascriptExecutor js = (JavascriptExecutor) webDriver;
-        js.executeScript(jsFunctions.get("stopRecordingTestScenario"));
-
-        webDriver.close();
-
-        List<StepDefinition> fileContent = FileOperations.completeFileOperations();
-
-        // record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
-
-        return new ResponseEntity<List<StepDefinition>>(fileContent, HttpStatus.OK);
     }
 
     /**

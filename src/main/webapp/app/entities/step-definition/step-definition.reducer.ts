@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IStepDefinition, defaultValue } from 'app/shared/model/step-definition.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IStepDefinition } from 'app/shared/model/step-definition.model';
+import { ITestScenario } from 'app/shared/model/test-scenario.model';
 
 const initialState: EntityState<IStepDefinition> = {
   loading: false,
@@ -22,6 +23,34 @@ export const getEntities = createAsyncThunk('stepDefinition/fetch_entity_list', 
   const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
   return axios.get<IStepDefinition[]>(requestUrl);
 });
+
+export const startWebDriver = createAsyncThunk('stepDefinition/start_web_driver', async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl}/record-start`;
+  return axios.get<string>(requestUrl);
+});
+
+export const stopWebDriver = createAsyncThunk('stepDefinition/stop_web_driver', async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl}/record-stop`;
+  return axios.get<IStepDefinition[]>(requestUrl);
+});
+
+export const saveStepDefinitions = createAsyncThunk(
+  'stepDefinition/save_step_definitions',
+  async (entities: IStepDefinition[], thunkAPI) => {
+    const requestUrl = `${apiUrl}/save-all`;
+    return await axios.post<IStepDefinition[]>(requestUrl, cleanEntity(entities));
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const getEntitiesByTestScenario = createAsyncThunk(
+  'stepDefinition/fetch_entity_list_by_test_scenario',
+  async (entity: ITestScenario, thunkAPI) => {
+    const requestUrl = `${apiUrl}/find-by-test-scenario`;
+    return await axios.post<IStepDefinition[]>(requestUrl, cleanEntity(entity));
+  },
+  { serializeError: serializeAxiosError }
+);
 
 export const getEntity = createAsyncThunk(
   'stepDefinition/fetch_entity',
@@ -89,7 +118,7 @@ export const StepDefinitionSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, stopWebDriver, getEntitiesByTestScenario, saveStepDefinitions), (state, action) => {
         const { data } = action.payload;
 
         return {
@@ -104,7 +133,7 @@ export const StepDefinitionSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, stopWebDriver, getEntitiesByTestScenario, saveStepDefinitions), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

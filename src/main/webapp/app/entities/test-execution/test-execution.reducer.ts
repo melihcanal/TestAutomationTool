@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { ITestExecution, defaultValue } from 'app/shared/model/test-execution.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, ITestExecution } from 'app/shared/model/test-execution.model';
+import { ITestScenario } from 'app/shared/model/test-scenario.model';
 
 const initialState: EntityState<ITestExecution> = {
   loading: false,
@@ -22,6 +23,15 @@ export const getEntities = createAsyncThunk('testExecution/fetch_entity_list', a
   const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
   return axios.get<ITestExecution[]>(requestUrl);
 });
+
+export const getEntitiesByTestScenario = createAsyncThunk(
+  'testExecution/fetch_entity_list_by_test_scenario',
+  async (entity: ITestScenario, thunkAPI) => {
+    const requestUrl = `${apiUrl}/find-by-test-scenario`;
+    return await axios.post<ITestExecution[]>(requestUrl, cleanEntity(entity));
+  },
+  { serializeError: serializeAxiosError }
+);
 
 export const getEntity = createAsyncThunk(
   'testExecution/fetch_entity',
@@ -89,7 +99,7 @@ export const TestExecutionSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getEntitiesByTestScenario), (state, action) => {
         const { data } = action.payload;
 
         return {
@@ -104,7 +114,7 @@ export const TestExecutionSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getEntitiesByTestScenario), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

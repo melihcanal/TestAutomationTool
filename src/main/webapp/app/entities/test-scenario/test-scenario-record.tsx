@@ -1,87 +1,92 @@
-import React, { useEffect } from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import Stack from '@mui/material/Stack';
-import { startWebDriver, stopWebDriver } from './test-scenario.reducer';
+import React from 'react';
+import { Button, Table } from 'reactstrap';
+import { saveStepDefinitions, startWebDriver, stopWebDriver } from 'app/entities/step-definition/step-definition.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
 
   const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
+  const loading = useAppSelector(state => state.stepDefinition.loading);
+  const testScenario = useAppSelector(state => state.testScenario.entity);
 
   const startRecording = () => {
-    console.log('Button: Start Recording');
     dispatch(startWebDriver({}));
   };
 
-  const stopRecording = async () => {
-    console.log('Button: Stop Recording');
-    await dispatch(stopWebDriver({}));
-    console.log(stepDefinitionList);
+  const stopRecording = () => {
+    dispatch(stopWebDriver({}));
   };
 
-  const list = [
-    'Navigate to the https://google.com',
-    'Type "something" in //div[@id="input"]',
-    'Click to element //div[@id="search"]',
-    'Click to element (//li[@id="list"])[1]',
-    'Type "something" in //div[@id="input"]',
-    'Click to element //div[@id="search"]',
-    'Click to element (//li[@id="list"])[1]',
-  ];
+  const saveTestScenario = () => {
+    const list = stepDefinitionList.slice();
+    list.forEach(stepDefinition => (stepDefinition.testScenario = testScenario));
+    dispatch(saveStepDefinitions(list));
+  };
+
+  const cancelRecording = () => {};
 
   return (
     <div>
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Button variant="contained" component="label" onClick={startRecording}>
+      <div className="d-flex justify-content-start">
+        <Button className="me-2" color="info" onClick={startRecording}>
           Start Recording
-          <input hidden accept="image/*" multiple type="file" />
         </Button>
-        <Button variant="outlined" component="label" onClick={stopRecording}>
+        <Button className="me-2" color="danger" onClick={stopRecording}>
           Stop Recording
-          <input hidden accept="image/*" multiple type="file" />
         </Button>
-      </Stack>
-      <List
-        sx={{
-          width: '100%',
-          maxWidth: 360,
-          bgcolor: 'background.paper',
-          position: 'relative',
-          overflow: 'auto',
-          maxHeight: 700,
-          '& ul': { padding: 0 },
-        }}
-        subheader={<li />}
-      >
-        {[1].map(sectionId => (
-          <li key={`section-${sectionId}`}>
-            <ul>
-              <ListSubheader>{`Sample test scenario`}</ListSubheader>
-              {list.map((id, item) => (
-                <ListItem key={`item-${sectionId}-${item}`}>
-                  <ListItemText primary={`${item}`} />
-                  <ListItemText secondary={id} />
-                </ListItem>
+      </div>
+      <div className="table-responsive">
+        {stepDefinitionList && stepDefinitionList.length > 0 ? (
+          <Table responsive>
+            <thead>
+              <tr>
+                <th>Action Type</th>
+                <th>Message</th>
+                <th>Xpath Or Css Selector</th>
+                <th>Keyword</th>
+                <th>Scroll Left</th>
+                <th>Scroll Top</th>
+                <th>Url</th>
+                <th>Expected</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {stepDefinitionList.map((stepDefinition, i) => (
+                <tr key={`entity-${i}`} data-cy="entityTable">
+                  <td>{stepDefinition.actionType}</td>
+                  <td>{stepDefinition.message}</td>
+                  <td>{stepDefinition.xpathOrCssSelector}</td>
+                  <td>{stepDefinition.keyword}</td>
+                  <td>{stepDefinition.scrollLeft}</td>
+                  <td>{stepDefinition.scrollTop}</td>
+                  <td>{stepDefinition.url}</td>
+                  <td>{stepDefinition.expected}</td>
+                  <td className="text-end">
+                    <div className="btn-group flex-btn-group-container">
+                      <Button color="danger" size="sm" data-cy="entityDeleteButton">
+                        <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
               ))}
-            </ul>
-          </li>
-        ))}
-      </List>
-      <Stack direction="row" spacing={2}>
-        <Button variant="outlined" startIcon={<DeleteIcon />}>
-          Cancel
-        </Button>
-        <Button variant="contained" endIcon={<SendIcon />}>
+            </tbody>
+          </Table>
+        ) : (
+          !loading && <div className="alert alert-warning">No Step Definitions found</div>
+        )}
+      </div>
+      <div className="d-flex justify-content-start">
+        <Button className="me-2" color="info" onClick={saveTestScenario}>
           Save
         </Button>
-      </Stack>
+        <Button className="me-2" color="danger" onClick={cancelRecording}>
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 };

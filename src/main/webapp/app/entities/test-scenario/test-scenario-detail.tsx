@@ -8,6 +8,8 @@ import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './test-scenario.reducer';
+import { getEntitiesByTestScenario as getTestExecutions } from '../test-execution/test-execution.reducer';
+import { getEntitiesByTestScenario as getStepDefinitions } from '../step-definition/step-definition.reducer';
 
 export const TestScenarioDetail = () => {
   const dispatch = useAppDispatch();
@@ -18,7 +20,21 @@ export const TestScenarioDetail = () => {
     dispatch(getEntity(id));
   }, []);
 
+  // entity gelince step definitions ve test executions da getir
   const testScenarioEntity = useAppSelector(state => state.testScenario.entity);
+  const testExecutionList = useAppSelector(state => state.testExecution.entities);
+  const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
+
+  useEffect(() => {
+    // if statement makes problem at first
+    if (testScenarioEntity && testScenarioEntity.id) {
+      dispatch(getTestExecutions(testScenarioEntity));
+      dispatch(getStepDefinitions(testScenarioEntity));
+    }
+  }, [testScenarioEntity]);
+
+  const printLists = () => {};
+
   return (
     <Row>
       <Col md="8">
@@ -81,6 +97,9 @@ export const TestScenarioDetail = () => {
         &nbsp;
         <Button tag={Link} to={`/test-scenario/${testScenarioEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+        </Button>
+        <Button className="me-2" color="info" onClick={printLists}>
+          Start Recording
         </Button>
       </Col>
     </Row>
