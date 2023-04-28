@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/shared/reducers/user-management';
-import { ITestScenario } from 'app/shared/model/test-scenario.model';
-import { getEntity, updateEntity, createEntity, reset } from './test-scenario.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './test-scenario.reducer';
 
 export const TestScenarioUpdate = () => {
   const dispatch = useAppDispatch();

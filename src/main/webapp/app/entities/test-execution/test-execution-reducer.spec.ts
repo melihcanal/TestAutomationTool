@@ -9,12 +9,12 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './test-execution.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { ITestExecution, defaultValue } from 'app/shared/model/test-execution.model';
+import { defaultValue, ITestExecution } from 'app/shared/model/test-execution.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {

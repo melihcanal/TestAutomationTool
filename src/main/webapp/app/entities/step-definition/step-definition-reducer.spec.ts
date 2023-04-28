@@ -9,12 +9,12 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './step-definition.reducer';
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { IStepDefinition, defaultValue } from 'app/shared/model/step-definition.model';
+import { defaultValue, IStepDefinition } from 'app/shared/model/step-definition.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {

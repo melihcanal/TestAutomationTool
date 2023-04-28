@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntities as getTestScenarios } from 'app/entities/test-scenario/test-scenario.reducer';
 import { ActionType } from 'app/shared/model/enumerations/action-type.model';
-import { getEntity, updateEntity, createEntity, reset } from './step-definition.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './step-definition.reducer';
 
 export const StepDefinitionUpdate = () => {
   const dispatch = useAppDispatch();
