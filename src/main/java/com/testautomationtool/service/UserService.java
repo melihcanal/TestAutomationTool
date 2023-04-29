@@ -85,6 +85,11 @@ public class UserService {
         return userRepository.findOneWithAuthoritiesByLogin(login);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.findOneByLogin(login);
+    }
+
     /**
      * Gets a list of all the authorities.
      * @return a list of all the authorities.
@@ -142,6 +147,7 @@ public class UserService {
      * @param authToken the authentication token.
      * @return the user from the authentication.
      */
+
     @Transactional
     public AdminUserDTO getUserFromAuthentication(AbstractAuthenticationToken authToken) {
         Map<String, Object> attributes;

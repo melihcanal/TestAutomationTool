@@ -8,12 +8,14 @@ import TestScenarioDetail from './test-scenario-detail';
 import TestScenarioUpdate from './test-scenario-update';
 import TestScenarioDeleteDialog from './test-scenario-delete-dialog';
 import { TestScenarioRecord } from './test-scenario-record';
+import TestScenarioNew from 'app/entities/test-scenario/test-scenario-new';
 
 const TestScenarioRoutes = () => (
   <ErrorBoundaryRoutes>
     <Route index element={<TestScenario />} />
     <Route path="new" element={<TestScenarioUpdate />} />
-    <Route path="record" element={<TestScenarioRecord />} />
+    <Route path="record/:id" element={<TestScenarioRecord />} />
+    <Route path="create" element={<TestScenarioNew />} />
     <Route path=":id">
       <Route index element={<TestScenarioDetail />} />
       <Route path="edit" element={<TestScenarioUpdate />} />

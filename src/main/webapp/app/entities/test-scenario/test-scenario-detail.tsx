@@ -20,7 +20,6 @@ export const TestScenarioDetail = () => {
     dispatch(getEntity(id));
   }, []);
 
-  // entity gelince step definitions ve test executions da getir
   const testScenarioEntity = useAppSelector(state => state.testScenario.entity);
   const testExecutionList = useAppSelector(state => state.testExecution.entities);
   const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);

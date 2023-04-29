@@ -1,5 +1,7 @@
 package com.testautomationtool.web.rest;
 
+import com.testautomationtool.domain.User;
+import com.testautomationtool.security.SecurityUtils;
 import com.testautomationtool.service.UserService;
 import com.testautomationtool.service.dto.UserDTO;
 import java.util.*;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 @RestController
 @RequestMapping("/api")
@@ -39,6 +42,13 @@ public class PublicUserResource {
         final Page<UserDTO> page = userService.getAllPublicUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/get-current")
+    public ResponseEntity<User> getCurrentUser() {
+        Optional<String> login = SecurityUtils.getCurrentUserLogin();
+        Optional<User> userByLogin = userService.getUserByLogin(login.orElse(null));
+        return ResponseUtil.wrapOrNotFound(userByLogin);
     }
 
     /**

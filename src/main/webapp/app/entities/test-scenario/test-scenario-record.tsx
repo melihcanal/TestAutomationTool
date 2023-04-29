@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Table } from 'reactstrap';
 import { saveStepDefinitions, startWebDriver, stopWebDriver } from 'app/entities/step-definition/step-definition.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getCurrentUser } from 'app/shared/reducers/user-management';
+import { useParams } from 'react-router-dom';
+import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<'id'>();
+
+  useEffect(() => {
+    dispatch(getCurrentUser({}));
+  }, []);
+
+  useEffect(() => {
+    dispatch(getEntity(id));
+  }, []);
+
   const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
   const loading = useAppSelector(state => state.stepDefinition.loading);
   const testScenario = useAppSelector(state => state.testScenario.entity);
+  const currentUser = useAppSelector(state => state.userManagement.user);
 
   const startRecording = () => {
     dispatch(startWebDriver({}));
@@ -21,7 +35,10 @@ export const TestScenarioRecord = () => {
 
   const saveTestScenario = () => {
     const list = stepDefinitionList.slice();
-    list.forEach(stepDefinition => (stepDefinition.testScenario = testScenario));
+    list.forEach(stepDefinition => {
+      stepDefinition.testScenario = testScenario;
+      stepDefinition.user = currentUser;
+    });
     dispatch(saveStepDefinitions(list));
   };
 
@@ -76,7 +93,7 @@ export const TestScenarioRecord = () => {
             </tbody>
           </Table>
         ) : (
-          !loading && <div className="alert alert-warning">No Step Definitions found</div>
+          !loading && <div className="alert alert-warning">Click Start Recording button to begin recording test</div>
         )}
       </div>
       <div className="d-flex justify-content-start">
