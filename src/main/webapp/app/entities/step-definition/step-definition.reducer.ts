@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { defaultValue, IStepDefinition } from 'app/shared/model/step-definition.model';
 import { ITestScenario } from 'app/shared/model/test-scenario.model';
+import { IStepDefinitionRequest } from 'app/shared/request/step-definition-request';
 
 const initialState: EntityState<IStepDefinition> = {
   loading: false,
@@ -36,7 +37,7 @@ export const stopWebDriver = createAsyncThunk('stepDefinition/stop_web_driver', 
 
 export const saveStepDefinitions = createAsyncThunk(
   'stepDefinition/save_step_definitions',
-  async (entities: IStepDefinition[], thunkAPI) => {
+  async (entities: IStepDefinitionRequest, thunkAPI) => {
     const requestUrl = `${apiUrl}/save-all`;
     return await axios.post<IStepDefinition[]>(requestUrl, cleanEntity(entities));
   },

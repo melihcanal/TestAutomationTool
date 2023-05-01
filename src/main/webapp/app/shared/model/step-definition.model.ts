@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ITestScenario } from 'app/shared/model/test-scenario.model';
 import { ActionType } from 'app/shared/model/enumerations/action-type.model';
 

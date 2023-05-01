@@ -2,6 +2,7 @@ package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.StepDefinition;
 import com.testautomationtool.domain.TestScenario;
+import com.testautomationtool.domain.request.StepDefinitionRequest;
 import com.testautomationtool.repository.StepDefinitionRepository;
 import com.testautomationtool.util.FileOperations;
 import com.testautomationtool.util.JavascriptInjector;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -75,14 +77,18 @@ public class StepDefinitionResource {
             .body(result);
     }
 
-    @PostMapping("/step-definitions/save-all")
-    public ResponseEntity<List<StepDefinition>> createStepDefinitions(@RequestBody List<StepDefinition> stepDefinitions)
+    @PostMapping(
+        value = "/step-definitions/save-all",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<StepDefinition>> createStepDefinitions(@RequestBody StepDefinitionRequest stepDefinitions)
         throws URISyntaxException {
         log.debug("REST request to save StepDefinition : {}", stepDefinitions);
-        if (stepDefinitions.stream().anyMatch(stepDefinition -> stepDefinition.getId() != null)) {
+        if (stepDefinitions.getStepDefinitionList().stream().anyMatch(stepDefinition -> stepDefinition.getId() != null)) {
             throw new BadRequestAlertException("A new stepDefinition cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        List<StepDefinition> result = stepDefinitionRepository.saveAll(stepDefinitions);
+        List<StepDefinition> result = stepDefinitionRepository.saveAll(stepDefinitions.getStepDefinitionList());
         return ResponseEntity
             .created(new URI("/api/step-definitions/"))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.toString()))

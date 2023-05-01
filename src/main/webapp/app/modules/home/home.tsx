@@ -1,17 +1,11 @@
 import './home.scss';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { Row, Col, Button, Table } from 'reactstrap';
-
-import { REDIRECT_URL } from 'app/shared/util/url-utils';
-import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { getEntities } from 'app/entities/test-scenario/test-scenario.reducer';
+import { Button, Col, Row } from 'reactstrap';
+import { useAppDispatch } from 'app/config/store';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { APP_DATE_FORMAT } from 'app/config/constants';
-import { TextFormat } from 'react-jhipster';
 
 export const Home = () => {
   const dispatch = useAppDispatch();
@@ -19,15 +13,21 @@ export const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const testScenarioList = useAppSelector(state => state.testScenario.entities);
-  const loading = useAppSelector(state => state.testScenario.loading);
-
   return (
-    <Row>
-      <Col md="9">
-        <div>Home Page</div>
-      </Col>
-    </Row>
+    <>
+      <Row>
+        <Col md="9">
+          <div>Home Page</div>
+        </Col>
+      </Row>
+      <Row>
+        <Col md="9">
+          <Button tag={Link} to={`/test-scenario/create`} color="primary" size="sm">
+            <FontAwesomeIcon icon="camera-alt" /> <span className="d-none d-md-inline">Record Test Scenario</span>
+          </Button>
+        </Col>
+      </Row>
+    </>
   );
 };
 

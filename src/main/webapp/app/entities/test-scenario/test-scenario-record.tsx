@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { Button, Table } from 'reactstrap';
-import { saveStepDefinitions, startWebDriver, stopWebDriver } from 'app/entities/step-definition/step-definition.reducer';
+import { reset, saveStepDefinitions, startWebDriver, stopWebDriver } from 'app/entities/step-definition/step-definition.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getCurrentUser } from 'app/shared/reducers/user-management';
 import { useParams } from 'react-router-dom';
 import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
+import { IStepDefinition } from 'app/shared/model/step-definition.model';
+import { IStepDefinitionRequest } from 'app/shared/request/step-definition-request';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
@@ -13,7 +14,7 @@ export const TestScenarioRecord = () => {
   const { id } = useParams<'id'>();
 
   useEffect(() => {
-    dispatch(getCurrentUser({}));
+    dispatch(reset());
   }, []);
 
   useEffect(() => {
@@ -23,7 +24,6 @@ export const TestScenarioRecord = () => {
   const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
   const loading = useAppSelector(state => state.stepDefinition.loading);
   const testScenario = useAppSelector(state => state.testScenario.entity);
-  const currentUser = useAppSelector(state => state.userManagement.user);
 
   const startRecording = () => {
     dispatch(startWebDriver({}));
@@ -34,12 +34,14 @@ export const TestScenarioRecord = () => {
   };
 
   const saveTestScenario = () => {
-    const list = stepDefinitionList.slice();
-    list.forEach(stepDefinition => {
-      stepDefinition.testScenario = testScenario;
-      stepDefinition.user = currentUser;
+    const list: IStepDefinition[] = [];
+    stepDefinitionList.forEach(stepDefinition => {
+      const obj: IStepDefinition = { ...stepDefinition };
+      obj.testScenario = testScenario;
+      list.push(obj);
     });
-    dispatch(saveStepDefinitions(list));
+    const request: IStepDefinitionRequest = { stepDefinitionList: list };
+    dispatch(saveStepDefinitions(request));
   };
 
   const cancelRecording = () => {};

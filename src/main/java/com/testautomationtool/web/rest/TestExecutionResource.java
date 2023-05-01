@@ -3,6 +3,7 @@ package com.testautomationtool.web.rest;
 import com.testautomationtool.domain.TestExecution;
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestExecutionRepository;
+import com.testautomationtool.repository.TestScenarioRepository;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,9 @@ public class TestExecutionResource {
 
     private final TestExecutionRepository testExecutionRepository;
 
+    @Autowired
+    private TestScenarioRepository testScenarioRepository;
+
     public TestExecutionResource(TestExecutionRepository testExecutionRepository) {
         this.testExecutionRepository = testExecutionRepository;
     }
@@ -53,6 +58,11 @@ public class TestExecutionResource {
             throw new BadRequestAlertException("A new testExecution cannot already have an ID", ENTITY_NAME, "idexists");
         }
         TestExecution result = testExecutionRepository.save(testExecution);
+        TestScenario testScenario = testExecution.getTestScenario();
+        testScenario.setNumberOfExecution(testScenario.getNumberOfExecution() + 1);
+        testScenario.setNumberOfPassed(testScenario.getNumberOfPassed() + (testExecution.getStatus() ? 1 : 0));
+        testScenario.setNumberOfFailed(testScenario.getNumberOfFailed() + (testExecution.getStatus() ? 0 : 1));
+        testScenarioRepository.save(testScenario);
         return ResponseEntity
             .created(new URI("/api/test-executions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))

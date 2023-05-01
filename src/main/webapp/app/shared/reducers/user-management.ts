@@ -19,7 +19,7 @@ export const getUsers = createAsyncThunk('userManagement/fetch_users', async ({ 
   return axios.get<IUser[]>(requestUrl);
 });
 
-export const getCurrentUser = createAsyncThunk('userManagement/fetch_current_user', async ({ page, size, sort }: IQueryParams) => {
+export const getCurrentUser = createAsyncThunk('userManagement/fetch_current_user', async () => {
   const requestUrl = `${apiUrl}/get-current`;
   return axios.get<IUser>(requestUrl);
 });

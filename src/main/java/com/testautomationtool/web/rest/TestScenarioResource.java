@@ -51,6 +51,9 @@ public class TestScenarioResource {
         if (testScenario.getId() != null) {
             throw new BadRequestAlertException("A new testScenario cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        testScenario.setNumberOfExecution(0L);
+        testScenario.setNumberOfPassed(0L);
+        testScenario.setNumberOfFailed(0L);
         TestScenario result = testScenarioRepository.save(testScenario);
         return ResponseEntity
             .created(new URI("/api/test-scenarios/" + result.getId()))
