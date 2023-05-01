@@ -30,7 +30,7 @@ public class FileOperations {
         File dest = new File("src/main/resources/browser/step_definitions.json");
 
         try {
-            // Files.copy(source.toPath(), dest.toPath());
+            Files.copy(source.toPath(), dest.toPath());
             JsonReader reader = new JsonReader(new FileReader("src/main/resources/browser/step_definitions.json"));
             Gson gson = new GsonBuilder().registerTypeAdapter(StepDefinition.class, new StepDefinitionAdapter()).create();
             return gson.fromJson(reader, new TypeToken<ArrayList<StepDefinition>>() {}.getType());

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -279,13 +278,13 @@ public class StepDefinitionResource {
     public ResponseEntity<List<StepDefinition>> stopRecordingTestScenario() {
         log.debug("Stopping to record test scenario...");
 
-        //jsExecutor.executeScript(jsFunctions.get("stopRecordingTestScenario"));
+        jsExecutor.executeScript(jsFunctions.get("stopRecordingTestScenario"));
 
-        //webDriver.close();
+        webDriver.close();
 
         List<StepDefinition> fileContent = FileOperations.completeFileOperations();
 
-        // record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
+        // TODO: record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
 
         return new ResponseEntity<>(fileContent, HttpStatus.OK);
     }

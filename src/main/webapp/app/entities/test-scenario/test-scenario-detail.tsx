@@ -40,16 +40,14 @@ export const TestScenarioDetail = () => {
     dispatch(getTestExecutions(testScenarioEntity));
   };
 
+  const executeTestScenario = () => {};
+
   return (
     <div>
       <Row>
         <Col md="3">
           <h2 data-cy="testScenarioDetailsHeading">Test Scenario</h2>
           <dl className="jh-entity-details">
-            <dt>
-              <span id="id">ID</span>
-            </dt>
-            <dd>{testScenarioEntity.id}</dd>
             <dt>
               <span id="title">Title</span>
             </dt>
@@ -71,6 +69,14 @@ export const TestScenarioDetail = () => {
             </dt>
             <dd>{testScenarioEntity.numberOfFailed}</dd>
             <dt>
+              <span id="numberOfExecution">Success Rate</span>
+            </dt>
+            <dd>% {Math.round((testScenarioEntity.numberOfPassed / testScenarioEntity.numberOfExecution) * 1000) / 10}</dd>
+            <dt>
+              <span id="createdBy">Created By</span>
+            </dt>
+            <dd>{testScenarioEntity.createdBy}</dd>
+            <dt>
               <span id="createdDate">Created Date</span>
             </dt>
             <dd>
@@ -78,6 +84,10 @@ export const TestScenarioDetail = () => {
                 <TextFormat value={testScenarioEntity.createdDate} type="date" format={APP_DATE_FORMAT} />
               ) : null}
             </dd>
+            <dt>
+              <span id="lastModifiedBy">Last Modified By</span>
+            </dt>
+            <dd>{testScenarioEntity.lastModifiedBy}</dd>
             <dt>
               <span id="lastModifiedDate">Last Modified Date</span>
             </dt>
@@ -89,6 +99,10 @@ export const TestScenarioDetail = () => {
             <dt>User</dt>
             <dd>{testScenarioEntity.user ? testScenarioEntity.user.id : ''}</dd>
           </dl>
+          <Button tag={Link} to="/test-scenario" replace color="success" onClick={executeTestScenario}>
+            <FontAwesomeIcon icon="play" /> <span className="d-none d-md-inline">Start</span>
+          </Button>
+          &nbsp;
           <Button tag={Link} to="/test-scenario" replace color="info" data-cy="entityDetailsBackButton">
             <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
           </Button>
@@ -122,11 +136,7 @@ export const TestScenarioDetail = () => {
                   <tbody>
                     {stepDefinitionList.map((stepDefinition, i) => (
                       <tr key={`entity-${i}`} data-cy="entityTable">
-                        <td>
-                          <Button tag={Link} to={`/step-definition/${stepDefinition.id}`} color="link" size="sm">
-                            {stepDefinition.id}
-                          </Button>
-                        </td>
+                        <td>${i + 1}</td>
                         <td>{stepDefinition.actionType}</td>
                         <td>{stepDefinition.message}</td>
                         <td>{stepDefinition.xpathOrCssSelector}</td>
@@ -194,7 +204,7 @@ export const TestScenarioDetail = () => {
                   <Table responsive>
                     <thead>
                       <tr>
-                        <th>ID</th>
+                        <th>#</th>
                         <th>Status</th>
                         <th>Message</th>
                         <th>Report Url</th>
@@ -208,11 +218,7 @@ export const TestScenarioDetail = () => {
                     <tbody>
                       {testExecutionList.map((testExecution, i) => (
                         <tr key={`entity-${i}`} data-cy="entityTable">
-                          <td>
-                            <Button tag={Link} to={`/test-execution/${testExecution.id}`} color="link" size="sm">
-                              {testExecution.id}
-                            </Button>
-                          </td>
+                          <td>${id + 1}</td>
                           <td>{testExecution.status ? 'true' : 'false'}</td>
                           <td>{testExecution.message}</td>
                           <td>{testExecution.reportUrl}</td>
@@ -220,12 +226,6 @@ export const TestScenarioDetail = () => {
                           <td>
                             {testExecution.createdDate ? (
                               <TextFormat type="date" value={testExecution.createdDate} format={APP_DATE_FORMAT} />
-                            ) : null}
-                          </td>
-                          <td>{testExecution.lastModifiedBy}</td>
-                          <td>
-                            {testExecution.lastModifiedDate ? (
-                              <TextFormat type="date" value={testExecution.lastModifiedDate} format={APP_DATE_FORMAT} />
                             ) : null}
                           </td>
                           <td className="text-end">
@@ -238,15 +238,6 @@ export const TestScenarioDetail = () => {
                                 data-cy="entityDetailsButton"
                               >
                                 <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                              </Button>
-                              <Button
-                                tag={Link}
-                                to={`/test-execution/${testExecution.id}/edit`}
-                                color="primary"
-                                size="sm"
-                                data-cy="entityEditButton"
-                              >
-                                <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
                               </Button>
                               <Button
                                 tag={Link}
