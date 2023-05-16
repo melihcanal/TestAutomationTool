@@ -3,16 +3,10 @@ import './home.scss';
 import React from 'react';
 
 import { Button, Col, Row } from 'reactstrap';
-import { useAppDispatch } from 'app/config/store';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const Home = () => {
-  const dispatch = useAppDispatch();
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
   return (
     <>
       <Row>

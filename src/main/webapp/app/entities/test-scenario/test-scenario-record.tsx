@@ -8,6 +8,8 @@ import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
 import { IStepDefinition } from 'app/shared/model/step-definition.model';
 import { IStepDefinitionRequest } from 'app/shared/request/step-definition-request';
 import { ValidatedField, ValidatedForm } from 'react-jhipster';
+import 'app/shared/css/common-style.scss';
+import { isValidURL } from 'app/shared/util/url-utils';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
@@ -29,16 +31,20 @@ export const TestScenarioRecord = () => {
   const testScenario = useAppSelector(state => state.testScenario.entity);
 
   const setUrl = values => {
-    const firstStep: IStepDefinition = { ...values };
-    setStartPage(firstStep);
+    if (isValidURL(values.url)) {
+      const firstStep: IStepDefinition = { ...values };
+      setStartPage(firstStep);
+    } else {
+      window.alert('Please enter a valid URL');
+    }
   };
 
   const startRecording = () => {
-    dispatch(startWebDriver({}));
+    dispatch(startWebDriver(startPage.url));
   };
 
   const stopRecording = () => {
-    dispatch(stopWebDriver({}));
+    dispatch(stopWebDriver());
   };
 
   const saveTestScenario = () => {
@@ -59,7 +65,7 @@ export const TestScenarioRecord = () => {
     <div>
       {startPage && startPage.url !== undefined ? (
         <div>
-          <div className="d-flex justify-content-start">
+          <div className="d-flex justify-content-start record-buttons">
             <Button className="me-2" color="info" onClick={startRecording}>
               Start Recording
             </Button>

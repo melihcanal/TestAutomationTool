@@ -25,12 +25,12 @@ export const getEntities = createAsyncThunk('stepDefinition/fetch_entity_list', 
   return axios.get<IStepDefinition[]>(requestUrl);
 });
 
-export const startWebDriver = createAsyncThunk('stepDefinition/start_web_driver', async ({ page, size, sort }: IQueryParams) => {
-  const requestUrl = `${apiUrl}/record-start`;
-  return axios.get<string>(requestUrl);
+export const startWebDriver = createAsyncThunk('stepDefinition/start_web_driver', async (url: string | null) => {
+  const requestUrl = `${apiUrl}/record-start?url=${url}`;
+  return axios.get<void>(requestUrl);
 });
 
-export const stopWebDriver = createAsyncThunk('stepDefinition/stop_web_driver', async ({ page, size, sort }: IQueryParams) => {
+export const stopWebDriver = createAsyncThunk('stepDefinition/stop_web_driver', async () => {
   const requestUrl = `${apiUrl}/record-stop`;
   return axios.get<IStepDefinition[]>(requestUrl);
 });

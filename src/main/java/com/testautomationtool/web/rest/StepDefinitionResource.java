@@ -255,17 +255,17 @@ public class StepDefinitionResource {
     }
 
     @GetMapping("/step-definitions/record-start")
-    public ResponseEntity<String> startRecordingTestScenario() {
+    public ResponseEntity<Void> startRecordingTestScenario(@RequestParam("url") String url) {
         log.debug("Recording test scenario...");
         fileOperations.removeJsonFile();
 
         System.setProperty("webdriver.chrome.driver", "src/main/resources/browser/chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--start-maximized --remote-allow-origins=*");
         webDriver = new ChromeDriver(options);
         jsExecutor = (JavascriptExecutor) webDriver;
         log.debug("DRIVER OK");
-        webDriver.get("https://www.google.com");
+        webDriver.get(url);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -275,7 +275,7 @@ public class StepDefinitionResource {
         JavascriptInjector injector = new JavascriptInjector(jsExecutor, webDriver, jsFunctions);
         injector.start();
 
-        return new ResponseEntity<>("testResult1", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/step-definitions/record-stop")
