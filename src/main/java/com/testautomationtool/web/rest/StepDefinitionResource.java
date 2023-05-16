@@ -20,6 +20,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,6 +50,9 @@ public class StepDefinitionResource {
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
+
+    @Autowired
+    private FileOperations fileOperations;
 
     private final StepDefinitionRepository stepDefinitionRepository;
 
@@ -253,14 +257,14 @@ public class StepDefinitionResource {
     @GetMapping("/step-definitions/record-start")
     public ResponseEntity<String> startRecordingTestScenario() {
         log.debug("Recording test scenario...");
-        FileOperations.removeJsonFile();
+        fileOperations.removeJsonFile();
 
         System.setProperty("webdriver.chrome.driver", "src/main/resources/browser/chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         webDriver = new ChromeDriver(options);
         jsExecutor = (JavascriptExecutor) webDriver;
-        System.out.println("DRIVER OK");
+        log.debug("DRIVER OK");
         webDriver.get("https://www.google.com");
         try {
             Thread.sleep(5000);
@@ -282,7 +286,7 @@ public class StepDefinitionResource {
 
         webDriver.close();
 
-        List<StepDefinition> fileContent = FileOperations.completeFileOperations();
+        List<StepDefinition> fileContent = fileOperations.completeFileOperations();
 
         // TODO: record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
 

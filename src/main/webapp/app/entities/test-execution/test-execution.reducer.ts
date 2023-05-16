@@ -24,6 +24,15 @@ export const getEntities = createAsyncThunk('testExecution/fetch_entity_list', a
   return axios.get<ITestExecution[]>(requestUrl);
 });
 
+export const executeTestScenario = createAsyncThunk(
+  'testExecution/fetch_test_execution',
+  async (id: string | number) => {
+    const requestUrl = `${apiUrl}/execute/${id}`;
+    return axios.get<ITestExecution>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
+
 export const getEntitiesByTestScenario = createAsyncThunk(
   'testExecution/fetch_entity_list_by_test_scenario',
   async (entity: ITestScenario, thunkAPI) => {
@@ -99,6 +108,10 @@ export const TestExecutionSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
+      .addCase(executeTestScenario.fulfilled, (state, action) => {
+        state.loading = false;
+        state.entity = action.payload.data;
+      })
       .addMatcher(isFulfilled(getEntities, getEntitiesByTestScenario), (state, action) => {
         const { data } = action.payload;
 
@@ -114,7 +127,7 @@ export const TestExecutionSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity, getEntitiesByTestScenario), state => {
+      .addMatcher(isPending(getEntities, getEntity, getEntitiesByTestScenario, executeTestScenario), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

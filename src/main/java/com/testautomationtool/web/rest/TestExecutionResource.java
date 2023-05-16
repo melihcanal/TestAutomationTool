@@ -4,7 +4,12 @@ import com.testautomationtool.domain.TestExecution;
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.repository.TestExecutionRepository;
 import com.testautomationtool.repository.TestScenarioRepository;
+import com.testautomationtool.util.FileOperations;
+import com.testautomationtool.util.JsonConverter;
+import com.testautomationtool.util.ShellCommand;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -14,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +45,9 @@ public class TestExecutionResource {
 
     @Autowired
     private TestScenarioRepository testScenarioRepository;
+
+    @Autowired
+    private FileOperations fileOperations;
 
     public TestExecutionResource(TestExecutionRepository testExecutionRepository) {
         this.testExecutionRepository = testExecutionRepository;
@@ -210,5 +219,30 @@ public class TestExecutionResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/test-executions/execute/{id}")
+    public ResponseEntity<TestExecution> executeTestScenario(@PathVariable Long id) {
+        log.debug("REST request to execute TestScenario : {}", id);
+        TestScenario testScenario = testScenarioRepository.findById(id).orElseThrow();
+        TestExecution testExecution = new TestExecution();
+        testExecution.setTestScenario(testScenario);
+        TestExecution save = testExecutionRepository.saveAndFlush(testExecution);
+        Long testExecutionId = save.getId();
+        String stepDefinitionListJson = JsonConverter.convertStepDefinitionListToJson(testScenario.getStepDefinitions());
+        try (FileWriter fileWriter = new FileWriter("src/main/resources/browser/test_execution_prepare.json")) {
+            fileWriter.write(stepDefinitionListJson);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        // TODO: return this method
+        boolean success = fileOperations.copyJsonFileToExecuteTest();
+        if (success) {
+            Thread thread = new Thread(new ShellCommand("mvn.cmd clean verify", testExecutionId));
+            thread.start();
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.FAILED_DEPENDENCY);
+        }
+        return new ResponseEntity<>(save, HttpStatus.OK);
     }
 }

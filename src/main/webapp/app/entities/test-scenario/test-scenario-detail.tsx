@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntity } from './test-scenario.reducer';
-import { getEntities, getEntitiesByTestScenario as getTestExecutions } from '../test-execution/test-execution.reducer';
+import { executeTestScenario, getEntities, getEntitiesByTestScenario as getTestExecutions } from '../test-execution/test-execution.reducer';
 import { getEntitiesByTestScenario as getStepDefinitions } from '../step-definition/step-definition.reducer';
+import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
 
 export const TestScenarioDetail = () => {
   const dispatch = useAppDispatch();
@@ -40,7 +40,9 @@ export const TestScenarioDetail = () => {
     dispatch(getTestExecutions(testScenarioEntity));
   };
 
-  const executeTestScenario = () => {};
+  const handleStartTest = () => {
+    dispatch(executeTestScenario(testScenarioEntity.id));
+  };
 
   return (
     <div>
@@ -99,7 +101,7 @@ export const TestScenarioDetail = () => {
             <dt>User</dt>
             <dd>{testScenarioEntity.user ? testScenarioEntity.user.id : ''}</dd>
           </dl>
-          <Button tag={Link} to="/test-scenario" replace color="success" onClick={executeTestScenario}>
+          <Button tag={Link} to="/test-scenario" replace color="success" onClick={handleStartTest}>
             <FontAwesomeIcon icon="play" /> <span className="d-none d-md-inline">Start</span>
           </Button>
           &nbsp;
@@ -136,7 +138,7 @@ export const TestScenarioDetail = () => {
                   <tbody>
                     {stepDefinitionList.map((stepDefinition, i) => (
                       <tr key={`entity-${i}`} data-cy="entityTable">
-                        <td>${i + 1}</td>
+                        <td>{i + 1}</td>
                         <td>{stepDefinition.actionType}</td>
                         <td>{stepDefinition.message}</td>
                         <td>{stepDefinition.xpathOrCssSelector}</td>
@@ -218,7 +220,7 @@ export const TestScenarioDetail = () => {
                     <tbody>
                       {testExecutionList.map((testExecution, i) => (
                         <tr key={`entity-${i}`} data-cy="entityTable">
-                          <td>${id + 1}</td>
+                          <td>{i + 1}</td>
                           <td>{testExecution.status ? 'true' : 'false'}</td>
                           <td>{testExecution.message}</td>
                           <td>{testExecution.reportUrl}</td>

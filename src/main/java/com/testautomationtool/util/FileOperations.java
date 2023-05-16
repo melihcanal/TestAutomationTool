@@ -11,12 +11,21 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FileOperations {
 
-    public static void removeJsonFile() {
+    private final Logger log = LoggerFactory.getLogger(FileOperations.class);
+
+    public void removeJsonFile() {
+        log.debug("Removing existing step definition file");
         try {
             Files.deleteIfExists(Paths.get(System.getProperty("user.home").concat("/Downloads/step_definitions.json")));
             Files.deleteIfExists(Paths.get("src/main/resources/browser/step_definitions.json"));
@@ -25,18 +34,50 @@ public class FileOperations {
         }
     }
 
-    public static List<StepDefinition> completeFileOperations() {
-        File source = new File(System.getProperty("user.home").concat("/Downloads/step_definitions.json"));
-        File dest = new File("src/main/resources/browser/step_definitions.json");
-
+    public List<StepDefinition> completeFileOperations() {
+        log.debug("Copying step definition file to resource directory");
         try {
-            Files.copy(source.toPath(), dest.toPath());
+            File source = new File(System.getProperty("user.home").concat("/Downloads/step_definitions.json"));
+            File dest = new File("src/main/resources/browser/step_definitions.json");
+            Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
             JsonReader reader = new JsonReader(new FileReader("src/main/resources/browser/step_definitions.json"));
             Gson gson = new GsonBuilder().registerTypeAdapter(StepDefinition.class, new StepDefinitionAdapter()).create();
             return gson.fromJson(reader, new TypeToken<ArrayList<StepDefinition>>() {}.getType());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException at completeFileOperations ", e);
             return null;
+        }
+    }
+
+    public boolean copyJsonFileToExecuteTest() {
+        log.debug("Copying step definition file to TestRunner directory");
+        try {
+            File source = new File("src/main/resources/browser/test_execution_prepare.json");
+            File dest = new File("../TestRunner/src/test/resources/step_definitions.json");
+            Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return true;
+        } catch (IOException e) {
+            log.error("IOException at completeFileOperations ", e);
+            return false;
+        }
+    }
+
+    public boolean copySerenityReportFile(Long testExecutionId) {
+        log.debug("Copying serenity report files to resource directory");
+        try {
+            File sourceDir = new File("../TestRunner/target/site/serenity");
+            File targetDir = new File("src/main/resources/reports/serenity");
+            FileUtils.copyDirectory(sourceDir, targetDir);
+            boolean result = targetDir.renameTo(new File("src/main/resources/reports/" + testExecutionId.toString()));
+            if (result) {
+                log.debug("Copy operation is successful");
+            } else {
+                log.debug("Copy operation is failed");
+            }
+            return result;
+        } catch (IOException exception) {
+            log.error("IOException while copying files:", exception);
+            return false;
         }
     }
 }
