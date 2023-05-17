@@ -31,7 +31,7 @@ export const TestScenarioRecord = () => {
   const testScenario = useAppSelector(state => state.testScenario.entity);
 
   const setUrl = values => {
-    if (isValidURL(values.url)) {
+    if (values.url !== undefined && isValidURL(values.url)) {
       const firstStep: IStepDefinition = { ...values };
       setStartPage(firstStep);
     } else {
