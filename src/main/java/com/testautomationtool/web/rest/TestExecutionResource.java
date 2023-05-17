@@ -53,13 +53,6 @@ public class TestExecutionResource {
         this.testExecutionRepository = testExecutionRepository;
     }
 
-    /**
-     * {@code POST  /test-executions} : Create a new testExecution.
-     *
-     * @param testExecution the testExecution to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new testExecution, or with status {@code 400 (Bad Request)} if the testExecution has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/test-executions")
     public ResponseEntity<TestExecution> createTestExecution(@RequestBody TestExecution testExecution) throws URISyntaxException {
         log.debug("REST request to save TestExecution : {}", testExecution);
@@ -78,16 +71,6 @@ public class TestExecutionResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /test-executions/:id} : Updates an existing testExecution.
-     *
-     * @param id the id of the testExecution to save.
-     * @param testExecution the testExecution to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated testExecution,
-     * or with status {@code 400 (Bad Request)} if the testExecution is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the testExecution couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/test-executions/{id}")
     public ResponseEntity<TestExecution> updateTestExecution(
         @PathVariable(value = "id", required = false) final Long id,
@@ -112,17 +95,6 @@ public class TestExecutionResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /test-executions/:id} : Partial updates given fields of an existing testExecution, field will ignore if it is null
-     *
-     * @param id the id of the testExecution to save.
-     * @param testExecution the testExecution to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated testExecution,
-     * or with status {@code 400 (Bad Request)} if the testExecution is not valid,
-     * or with status {@code 404 (Not Found)} if the testExecution is not found,
-     * or with status {@code 500 (Internal Server Error)} if the testExecution couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/test-executions/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<TestExecution> partialUpdateTestExecution(
         @PathVariable(value = "id", required = false) final Long id,
@@ -175,11 +147,6 @@ public class TestExecutionResource {
         );
     }
 
-    /**
-     * {@code GET  /test-executions} : get all the testExecutions.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of testExecutions in body.
-     */
     @GetMapping("/test-executions")
     public List<TestExecution> getAllTestExecutions() {
         log.debug("REST request to get all TestExecutions");
@@ -192,12 +159,6 @@ public class TestExecutionResource {
         return testExecutionRepository.findByTestScenario(testScenario);
     }
 
-    /**
-     * {@code GET  /test-executions/:id} : get the "id" testExecution.
-     *
-     * @param id the id of the testExecution to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the testExecution, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/test-executions/{id}")
     public ResponseEntity<TestExecution> getTestExecution(@PathVariable Long id) {
         log.debug("REST request to get TestExecution : {}", id);
@@ -205,12 +166,6 @@ public class TestExecutionResource {
         return ResponseUtil.wrapOrNotFound(testExecution);
     }
 
-    /**
-     * {@code DELETE  /test-executions/:id} : delete the "id" testExecution.
-     *
-     * @param id the id of the testExecution to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/test-executions/{id}")
     public ResponseEntity<Void> deleteTestExecution(@PathVariable Long id) {
         log.debug("REST request to delete TestExecution : {}", id);

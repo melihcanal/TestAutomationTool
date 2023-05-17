@@ -38,13 +38,6 @@ public class TestScenarioResource {
         this.testScenarioRepository = testScenarioRepository;
     }
 
-    /**
-     * {@code POST  /test-scenarios} : Create a new testScenario.
-     *
-     * @param testScenario the testScenario to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new testScenario, or with status {@code 400 (Bad Request)} if the testScenario has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/test-scenarios")
     public ResponseEntity<TestScenario> createTestScenario(@RequestBody TestScenario testScenario) throws URISyntaxException {
         log.debug("REST request to save TestScenario : {}", testScenario);
@@ -61,16 +54,6 @@ public class TestScenarioResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /test-scenarios/:id} : Updates an existing testScenario.
-     *
-     * @param id           the id of the testScenario to save.
-     * @param testScenario the testScenario to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated testScenario,
-     * or with status {@code 400 (Bad Request)} if the testScenario is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the testScenario couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/test-scenarios/{id}")
     public ResponseEntity<TestScenario> updateTestScenario(
         @PathVariable(value = "id", required = false) final Long id,
@@ -95,17 +78,6 @@ public class TestScenarioResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /test-scenarios/:id} : Partial updates given fields of an existing testScenario, field will ignore if it is null
-     *
-     * @param id           the id of the testScenario to save.
-     * @param testScenario the testScenario to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated testScenario,
-     * or with status {@code 400 (Bad Request)} if the testScenario is not valid,
-     * or with status {@code 404 (Not Found)} if the testScenario is not found,
-     * or with status {@code 500 (Internal Server Error)} if the testScenario couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/test-scenarios/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<TestScenario> partialUpdateTestScenario(
         @PathVariable(value = "id", required = false) final Long id,
@@ -164,23 +136,12 @@ public class TestScenarioResource {
         );
     }
 
-    /**
-     * {@code GET  /test-scenarios} : get all the testScenarios.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of testScenarios in body.
-     */
     @GetMapping("/test-scenarios")
     public List<TestScenario> getAllTestScenarios() {
         log.debug("REST request to get all TestScenarios");
         return testScenarioRepository.findAll();
     }
 
-    /**
-     * {@code GET  /test-scenarios/:id} : get the "id" testScenario.
-     *
-     * @param id the id of the testScenario to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the testScenario, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/test-scenarios/{id}")
     public ResponseEntity<TestScenario> getTestScenario(@PathVariable Long id) {
         log.debug("REST request to get TestScenario : {}", id);
@@ -188,12 +149,6 @@ public class TestScenarioResource {
         return ResponseUtil.wrapOrNotFound(testScenario);
     }
 
-    /**
-     * {@code DELETE  /test-scenarios/:id} : delete the "id" testScenario.
-     *
-     * @param id the id of the testScenario to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/test-scenarios/{id}")
     public ResponseEntity<Void> deleteTestScenario(@PathVariable Long id) {
         log.debug("REST request to delete TestScenario : {}", id);

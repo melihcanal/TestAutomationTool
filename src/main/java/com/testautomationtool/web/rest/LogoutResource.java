@@ -23,13 +23,6 @@ public class LogoutResource {
         this.registration = registrations.findByRegistrationId("oidc");
     }
 
-    /**
-     * {@code POST  /api/logout} : logout the current user.
-     *
-     * @param request the {@link HttpServletRequest}.
-     * @param idToken the ID token.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and a body with a global logout URL.
-     */
     @PostMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, @AuthenticationPrincipal(expression = "idToken") OidcIdToken idToken) {
         StringBuilder logoutUrl = new StringBuilder();

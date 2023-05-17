@@ -60,13 +60,6 @@ public class StepDefinitionResource {
         this.stepDefinitionRepository = stepDefinitionRepository;
     }
 
-    /**
-     * {@code POST  /step-definitions} : Create a new stepDefinition.
-     *
-     * @param stepDefinition the stepDefinition to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new stepDefinition, or with status {@code 400 (Bad Request)} if the stepDefinition has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/step-definitions")
     public ResponseEntity<StepDefinition> createStepDefinition(@RequestBody StepDefinition stepDefinition) throws URISyntaxException {
         log.debug("REST request to save StepDefinition : {}", stepDefinition);
@@ -98,15 +91,6 @@ public class StepDefinitionResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /step-definitions/:id} : Updates an existing stepDefinition.
-     *
-     * @param id the id of the stepDefinition to save.
-     * @param stepDefinition the stepDefinition to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated stepDefinition,
-     * or with status {@code 400 (Bad Request)} if the stepDefinition is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the stepDefinition couldn't be updated.
-     */
     @PutMapping("/step-definitions/{id}")
     public ResponseEntity<StepDefinition> updateStepDefinition(
         @PathVariable(value = "id", required = false) final Long id,
@@ -131,16 +115,6 @@ public class StepDefinitionResource {
             .body(result);
     }
 
-    /**
-     * {@code PATCH  /step-definitions/:id} : Partial updates given fields of an existing stepDefinition, field will ignore if it is null
-     *
-     * @param id the id of the stepDefinition to save.
-     * @param stepDefinition the stepDefinition to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated stepDefinition,
-     * or with status {@code 400 (Bad Request)} if the stepDefinition is not valid,
-     * or with status {@code 404 (Not Found)} if the stepDefinition is not found,
-     * or with status {@code 500 (Internal Server Error)} if the stepDefinition couldn't be updated.
-     */
     @PatchMapping(value = "/step-definitions/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<StepDefinition> partialUpdateStepDefinition(
         @PathVariable(value = "id", required = false) final Long id,
@@ -208,11 +182,6 @@ public class StepDefinitionResource {
         );
     }
 
-    /**
-     * {@code GET  /step-definitions} : get all the stepDefinitions.
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of stepDefinitions in body.
-     */
     @GetMapping("/step-definitions")
     public List<StepDefinition> getAllStepDefinitions() {
         log.debug("REST request to get all StepDefinitions");
@@ -225,12 +194,6 @@ public class StepDefinitionResource {
         return stepDefinitionRepository.findByTestScenario(testScenario);
     }
 
-    /**
-     * {@code GET  /step-definitions/:id} : get the "id" stepDefinition.
-     *
-     * @param id the id of the stepDefinition to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the stepDefinition, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/step-definitions/{id}")
     public ResponseEntity<StepDefinition> getStepDefinition(@PathVariable Long id) {
         log.debug("REST request to get StepDefinition : {}", id);
@@ -238,12 +201,6 @@ public class StepDefinitionResource {
         return ResponseUtil.wrapOrNotFound(stepDefinition);
     }
 
-    /**
-     * {@code DELETE  /step-definitions/:id} : delete the "id" stepDefinition.
-     *
-     * @param id the id of the stepDefinition to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/step-definitions/{id}")
     public ResponseEntity<Void> deleteStepDefinition(@PathVariable Long id) {
         log.debug("REST request to delete StepDefinition : {}", id);

@@ -100,7 +100,6 @@ public class UserService {
     }
 
     private User syncUserWithIdP(Map<String, Object> details, User user) {
-        // save authorities in to sync user roles/groups between IdP and JHipster's local database
         Collection<String> dbAuthorities = getAuthorities();
         Collection<String> userAuthorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toList());
         for (String authority : userAuthorities) {
@@ -111,10 +110,8 @@ public class UserService {
                 authorityRepository.save(authorityToSave);
             }
         }
-        // save account in to sync users between IdP and JHipster's local database
         Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
         if (existingUser.isPresent()) {
-            // if IdP sends last updated information, use it to determine if an update should happen
             if (details.get("updated_at") != null) {
                 Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
                 Instant idpModifiedDate;
@@ -127,7 +124,6 @@ public class UserService {
                     log.debug("Updating user '{}' in local database", user.getLogin());
                     updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
                 }
-                // no last updated info, blindly update
             } else {
                 log.debug("Updating user '{}' in local database", user.getLogin());
                 updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
@@ -183,7 +179,6 @@ public class UserService {
         if (details.get("preferred_username") != null) {
             username = ((String) details.get("preferred_username")).toLowerCase();
         }
-        // handle resource server JWT, where sub claim is email and uid is ID
         if (details.get("uid") != null) {
             user.setId((String) details.get("uid"));
             user.setLogin(sub);
