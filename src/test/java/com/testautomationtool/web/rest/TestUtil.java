@@ -23,9 +23,6 @@ import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
 
-/**
- * Utility class for testing REST controllers.
- */
 public final class TestUtil {
 
     private static final ObjectMapper mapper = createObjectMapper();

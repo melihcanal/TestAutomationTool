@@ -64,10 +64,9 @@ class CustomClaimConverterIT {
 
     @Test
     void testConvert() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         user.put("given_name", NAME);
@@ -75,10 +74,8 @@ class CustomClaimConverterIT {
         user.putArray("groups").add(AuthoritiesConstants.ADMIN).add(AuthoritiesConstants.USER);
         mockHttpGetUserInfo(user);
 
-        // WHEN
         Map<String, Object> convertedClaims = customClaimConverter.convert(claims);
 
-        // THEN
         assertThat(convertedClaims)
             .containsEntry("sub", "123")
             .containsEntry("preferred_username", USERNAME)
@@ -89,26 +86,23 @@ class CustomClaimConverterIT {
 
     @Test
     void testConvert_withoutGroups() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         user.put("given_name", NAME);
         user.put("family_name", FAMILY_NAME);
         mockHttpGetUserInfo(user);
 
-        // WHEN
         assertThatCode(() -> customClaimConverter.convert(claims)).doesNotThrowAnyException();
     }
 
     @Test
     void testConvert_withNamespacedRoles() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         user.put("given_name", NAME);
@@ -116,10 +110,8 @@ class CustomClaimConverterIT {
         user.putArray(SecurityUtils.CLAIMS_NAMESPACE + "roles").add(AuthoritiesConstants.ADMIN).add(AuthoritiesConstants.USER);
         mockHttpGetUserInfo(user);
 
-        // WHEN
         Map<String, Object> convertedClaims = customClaimConverter.convert(claims);
 
-        // THEN
         assertThat(convertedClaims)
             .containsEntry("sub", "123")
             .containsEntry("preferred_username", USERNAME)
@@ -130,10 +122,9 @@ class CustomClaimConverterIT {
 
     @Test
     void testConvert_withoutFirstAndLastName() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         mockHttpGetUserInfo(user);
@@ -147,10 +138,9 @@ class CustomClaimConverterIT {
 
     @Test
     void testConvert_withName() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         user.put("name", FULL_NAME);
@@ -168,10 +158,9 @@ class CustomClaimConverterIT {
 
     @Test
     void testConvert_withLastNameMultipleWords() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         user.put("name", FULL_NAME + " " + NAME_SUFFIX);
@@ -190,10 +179,9 @@ class CustomClaimConverterIT {
 
     @Test
     void testConvert_withEmail() {
-        // GIVEN
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "123");
-        // AND
+
         ObjectNode user = mapper.createObjectNode();
         user.put("preferred_username", USERNAME);
         user.put("email", EMAIL);

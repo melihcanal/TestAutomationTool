@@ -2,6 +2,7 @@ package com.testautomationtool.config;
 
 import java.util.Arrays;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -14,12 +15,15 @@ import tech.jhipster.config.JHipsterConstants;
 
 public class TestContainersSpringContextCustomizerFactory implements ContextCustomizerFactory {
 
-    private Logger log = LoggerFactory.getLogger(TestContainersSpringContextCustomizerFactory.class);
+    private final Logger log = LoggerFactory.getLogger(TestContainersSpringContextCustomizerFactory.class);
 
     private static SqlTestContainer prodTestContainer;
 
     @Override
-    public ContextCustomizer createContextCustomizer(Class<?> testClass, List<ContextConfigurationAttributes> configAttributes) {
+    public ContextCustomizer createContextCustomizer(
+        @NotNull Class<?> testClass,
+        @NotNull List<ContextConfigurationAttributes> configAttributes
+    ) {
         return (context, mergedConfig) -> {
             ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
             TestPropertyValues testValues = TestPropertyValues.empty();

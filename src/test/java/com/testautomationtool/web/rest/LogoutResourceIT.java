@@ -23,9 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-/**
- * Integration tests for the {@link LogoutResource} REST controller.
- */
 @IntegrationTest
 class LogoutResourceIT {
 

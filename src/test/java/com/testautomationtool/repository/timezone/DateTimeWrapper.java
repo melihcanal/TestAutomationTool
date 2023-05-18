@@ -118,15 +118,21 @@ public class DateTimeWrapper implements Serializable {
         return Objects.hashCode(getId());
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "TimeZoneTest{" +
-            "id=" + id +
-            ", instant=" + instant +
-            ", localDateTime=" + localDateTime +
-            ", offsetDateTime=" + offsetDateTime +
-            ", zonedDateTime=" + zonedDateTime +
-            '}';
+        return (
+            "TimeZoneTest{" +
+            "id=" +
+            id +
+            ", instant=" +
+            instant +
+            ", localDateTime=" +
+            localDateTime +
+            ", offsetDateTime=" +
+            offsetDateTime +
+            ", zonedDateTime=" +
+            zonedDateTime +
+            '}'
+        );
     }
 }

@@ -12,26 +12,35 @@ import com.tngtech.archunit.lang.ArchRule;
 @AnalyzeClasses(packagesOf = TestAutomationToolApp.class, importOptions = DoNotIncludeTests.class)
 class TechnicalStructureTest {
 
-    // prettier-ignore
     @ArchTest
     static final ArchRule respectsTechnicalArchitectureLayers = layeredArchitecture()
-        .layer("Config").definedBy("..config..")
-        .layer("Web").definedBy("..web..")
-        .optionalLayer("Service").definedBy("..service..")
-        .layer("Security").definedBy("..security..")
-        .layer("Persistence").definedBy("..repository..")
-        .layer("Domain").definedBy("..domain..")
-
-        .whereLayer("Config").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
-        .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config")
-        .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Service", "Web")
-        .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service", "Security", "Web", "Config")
-        .whereLayer("Domain").mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config")
-
+        .layer("Config")
+        .definedBy("..config..")
+        .layer("Web")
+        .definedBy("..web..")
+        .optionalLayer("Service")
+        .definedBy("..service..")
+        .layer("Security")
+        .definedBy("..security..")
+        .layer("Persistence")
+        .definedBy("..repository..")
+        .layer("Domain")
+        .definedBy("..domain..")
+        .whereLayer("Config")
+        .mayNotBeAccessedByAnyLayer()
+        .whereLayer("Web")
+        .mayOnlyBeAccessedByLayers("Config")
+        .whereLayer("Service")
+        .mayOnlyBeAccessedByLayers("Web", "Config")
+        .whereLayer("Security")
+        .mayOnlyBeAccessedByLayers("Config", "Service", "Web")
+        .whereLayer("Persistence")
+        .mayOnlyBeAccessedByLayers("Service", "Security", "Web", "Config")
+        .whereLayer("Domain")
+        .mayOnlyBeAccessedByLayers("Persistence", "Service", "Security", "Web", "Config")
         .ignoreDependency(belongToAnyOf(TestAutomationToolApp.class), alwaysTrue())
-        .ignoreDependency(alwaysTrue(), belongToAnyOf(
-            com.testautomationtool.config.Constants.class,
-            com.testautomationtool.config.ApplicationProperties.class
-        ));
+        .ignoreDependency(
+            alwaysTrue(),
+            belongToAnyOf(com.testautomationtool.config.Constants.class, com.testautomationtool.config.ApplicationProperties.class)
+        );
 }

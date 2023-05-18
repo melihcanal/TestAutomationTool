@@ -10,9 +10,6 @@ import java.lang.annotation.Target;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-/**
- * Base composite annotation for integration tests.
- */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = { TestAutomationToolApp.class, AsyncSyncConfiguration.class, TestSecurityConfiguration.class })

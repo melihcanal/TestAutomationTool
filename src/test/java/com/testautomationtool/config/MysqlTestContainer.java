@@ -10,8 +10,8 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 public class MysqlTestContainer implements SqlTestContainer {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlTestContainer.class);
-    private long memoryInBytes = 100 * 1024 * 1024;
-    private long memorySwapInBytes = 200 * 1024 * 1024;
+    private final long memoryInBytes = 100 * 1024 * 1024;
+    private final long memorySwapInBytes = 200 * 1024 * 1024;
 
     private MySQLContainer<?> mysqlContainer;
 
