@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteProps, useLocation, Navigate } from 'react-router-dom';
+import { Navigate, RouteProps, useLocation } from 'react-router-dom';
 
 import { useAppSelector } from 'app/config/store';
 import ErrorBoundary from 'app/shared/error/error-boundary';

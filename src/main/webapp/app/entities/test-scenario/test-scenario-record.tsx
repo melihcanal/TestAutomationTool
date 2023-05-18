@@ -8,8 +8,8 @@ import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
 import { IStepDefinition } from 'app/shared/model/step-definition.model';
 import { IStepDefinitionRequest } from 'app/shared/request/step-definition-request';
 import { ValidatedField, ValidatedForm } from 'react-jhipster';
-import 'app/shared/css/common-style.scss';
 import { isValidURL } from 'app/shared/util/url-utils';
+import 'app/shared/css/common-style.scss';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();

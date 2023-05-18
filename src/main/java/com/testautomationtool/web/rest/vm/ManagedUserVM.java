@@ -2,16 +2,10 @@ package com.testautomationtool.web.rest.vm;
 
 import com.testautomationtool.service.dto.AdminUserDTO;
 
-/**
- * View Model extending the AdminUserDTO, which is meant to be used in the user management UI.
- */
 public class ManagedUserVM extends AdminUserDTO {
 
-    public ManagedUserVM() {
-        // Empty constructor needed for Jackson.
-    }
+    public ManagedUserVM() {}
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "ManagedUserVM{" + super.toString() + "} ";

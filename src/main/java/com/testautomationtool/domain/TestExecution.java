@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -32,7 +33,8 @@ public class TestExecution extends AbstractAuditingEntity<Long> implements Seria
     @Column(name = "report_url")
     private String reportUrl;
 
-    @ManyToOne
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "testExecutions", "stepDefinitions", "user" }, allowSetters = true)
     private TestScenario testScenario;
 

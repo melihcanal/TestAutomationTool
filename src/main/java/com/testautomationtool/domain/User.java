@@ -61,7 +61,7 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     private String imageUrl;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "jhi_user_authority",
         joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },

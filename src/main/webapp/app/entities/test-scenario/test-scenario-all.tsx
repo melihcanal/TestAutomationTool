@@ -7,20 +7,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntitiesByCurrentUser } from './test-scenario.reducer';
+import { getEntities } from './test-scenario.reducer';
 
-export const TestScenario = () => {
+export const TestScenarioAll = () => {
   const dispatch = useAppDispatch();
 
   const testScenarioList = useAppSelector(state => state.testScenario.entities);
   const loading = useAppSelector(state => state.testScenario.loading);
 
   useEffect(() => {
-    dispatch(getEntitiesByCurrentUser());
+    dispatch(getEntities({}));
   }, []);
 
   const handleSyncList = () => {
-    dispatch(getEntitiesByCurrentUser());
+    dispatch(getEntities({}));
   };
 
   return (
@@ -111,4 +111,4 @@ export const TestScenario = () => {
   );
 };
 
-export default TestScenario;
+export default TestScenarioAll;

@@ -1,11 +1,12 @@
 package com.testautomationtool.config;
 
-import com.testautomationtool.security.*;
+import com.testautomationtool.security.AuthoritiesConstants;
 import com.testautomationtool.security.SecurityUtils;
 import com.testautomationtool.security.oauth2.AudienceValidator;
 import com.testautomationtool.security.oauth2.CustomClaimConverter;
 import com.testautomationtool.security.oauth2.JwtGrantedAuthorityConverter;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -54,52 +55,71 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // @formatter:off
         http
             .csrf()
             .ignoringAntMatchers("/h2-console/**")
             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-        .and()
+            .and()
             .addFilterBefore(corsFilter, CsrfFilter.class)
             .exceptionHandling()
-                .authenticationEntryPoint(problemSupport)
-                .accessDeniedHandler(problemSupport)
-        .and()
+            .authenticationEntryPoint(problemSupport)
+            .accessDeniedHandler(problemSupport)
+            .and()
             .headers()
-                .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())
+            .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())
             .and()
-                .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+            .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
             .and()
-                .permissionsPolicy().policy("camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()")
+            .permissionsPolicy()
+            .policy(
+                "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
+            )
             .and()
-                .frameOptions().sameOrigin()
-        .and()
+            .frameOptions()
+            .sameOrigin()
+            .and()
             .authorizeRequests()
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .antMatchers("/app/**/*.{js,html}").permitAll()
-            .antMatchers("/i18n/**").permitAll()
-            .antMatchers("/content/**").permitAll()
-            .antMatchers("/swagger-ui/**").permitAll()
-            .antMatchers("/test/**").permitAll()
-            .antMatchers("/h2-console/**").permitAll()
-            .antMatchers("/api/authenticate").permitAll()
-            .antMatchers("/api/auth-info").permitAll()
-            .antMatchers("/api/admin/**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers("/api/**").authenticated()
-            .antMatchers("/management/health").permitAll()
-            .antMatchers("/management/health/**").permitAll()
-            .antMatchers("/management/info").permitAll()
-            .antMatchers("/management/prometheus").permitAll()
-            .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-        .and()
-            .oauth2Login()
-        .and()
-            .oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(authenticationConverter())
-                .and()
+            .antMatchers(HttpMethod.OPTIONS, "/**")
+            .permitAll()
+            .antMatchers("/app/**/*.{js,html}")
+            .permitAll()
+            .antMatchers("/i18n/**")
+            .permitAll()
+            .antMatchers("/content/**")
+            .permitAll()
+            .antMatchers("/swagger-ui/**")
+            .permitAll()
+            .antMatchers("/test/**")
+            .permitAll()
+            .antMatchers("/h2-console/**")
+            .permitAll()
+            .antMatchers("/api/authenticate")
+            .permitAll()
+            .antMatchers("/api/auth-info")
+            .permitAll()
+            .antMatchers("/api/admin/**")
+            .hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers("/api/**")
+            .authenticated()
+            .antMatchers("/management/health")
+            .permitAll()
+            .antMatchers("/management/health/**")
+            .permitAll()
+            .antMatchers("/management/info")
+            .permitAll()
+            .antMatchers("/management/prometheus")
+            .permitAll()
+            .antMatchers("/management/**")
+            .hasAuthority(AuthoritiesConstants.ADMIN)
             .and()
-                .oauth2Client();
+            .oauth2Login()
+            .and()
+            .oauth2ResourceServer()
+            .jwt()
+            .jwtAuthenticationConverter(authenticationConverter())
+            .and()
+            .and()
+            .oauth2Client();
         return http.build();
         // @formatter:on
     }

@@ -11,9 +11,6 @@ import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing global OIDC logout.
- */
 @RestController
 public class LogoutResource {
 

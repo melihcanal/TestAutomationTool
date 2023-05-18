@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ITestExecution } from 'app/shared/model/test-execution.model';
 import { IStepDefinition } from 'app/shared/model/step-definition.model';
 import { IUser } from 'app/shared/model/user.model';

@@ -2,11 +2,11 @@ import './header.scss';
 
 import React, { useState } from 'react';
 
-import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
+import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
 
-import { Home, Brand } from './header-components';
-import { AdminMenu, EntitiesMenu, AccountMenu } from '../menus';
+import { Brand, Home } from './header-components';
+import { AccountMenu, AdminMenu, EntitiesMenu } from '../menus';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
@@ -27,8 +27,6 @@ const Header = (props: IHeaderProps) => {
     ) : null;
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
-
-  /* jhipster-needle-add-element-to-menu - JHipster will add new menu items here */
 
   return (
     <div id="app-header">

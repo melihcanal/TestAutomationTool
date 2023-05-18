@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ITestScenario } from 'app/shared/model/test-scenario.model';
 
 export interface ITestExecution {

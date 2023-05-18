@@ -2,8 +2,11 @@ package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.TestExecution;
 import com.testautomationtool.domain.TestScenario;
+import com.testautomationtool.domain.User;
 import com.testautomationtool.repository.TestExecutionRepository;
 import com.testautomationtool.repository.TestScenarioRepository;
+import com.testautomationtool.security.SecurityUtils;
+import com.testautomationtool.service.UserService;
 import com.testautomationtool.util.FileOperations;
 import com.testautomationtool.util.JsonConverter;
 import com.testautomationtool.util.ShellCommand;
@@ -49,6 +52,9 @@ public class TestExecutionResource {
     @Autowired
     private FileOperations fileOperations;
 
+    @Autowired
+    private UserService userService;
+
     public TestExecutionResource(TestExecutionRepository testExecutionRepository) {
         this.testExecutionRepository = testExecutionRepository;
     }
@@ -77,6 +83,18 @@ public class TestExecutionResource {
         @RequestBody TestExecution testExecution
     ) throws URISyntaxException {
         log.debug("REST request to update TestExecution : {}, {}", id, testExecution);
+
+        Optional<TestExecution> execution = testExecutionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+
+        if (
+            !userService.userHasAdminRole(userByLogin) &&
+            execution.isPresent() &&
+            !execution.get().getTestScenario().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         if (testExecution.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -101,6 +119,18 @@ public class TestExecutionResource {
         @RequestBody TestExecution testExecution
     ) throws URISyntaxException {
         log.debug("REST request to partial update TestExecution partially : {}, {}", id, testExecution);
+
+        Optional<TestExecution> execution = testExecutionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+
+        if (
+            !userService.userHasAdminRole(userByLogin) &&
+            execution.isPresent() &&
+            !execution.get().getTestScenario().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         if (testExecution.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -163,12 +193,37 @@ public class TestExecutionResource {
     public ResponseEntity<TestExecution> getTestExecution(@PathVariable Long id) {
         log.debug("REST request to get TestExecution : {}", id);
         Optional<TestExecution> testExecution = testExecutionRepository.findById(id);
+
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+
+        if (
+            !userService.userHasAdminRole(userByLogin) &&
+            testExecution.isPresent() &&
+            !testExecution.get().getTestScenario().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         return ResponseUtil.wrapOrNotFound(testExecution);
     }
 
     @DeleteMapping("/test-executions/{id}")
     public ResponseEntity<Void> deleteTestExecution(@PathVariable Long id) {
         log.debug("REST request to delete TestExecution : {}", id);
+
+        Optional<TestExecution> execution = testExecutionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+
+        if (
+            !userService.userHasAdminRole(userByLogin) &&
+            execution.isPresent() &&
+            !execution.get().getTestScenario().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         testExecutionRepository.deleteById(id);
         return ResponseEntity
             .noContent()

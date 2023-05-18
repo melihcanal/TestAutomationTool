@@ -26,9 +26,6 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-/**
- * Claim converter to add custom claims by retrieving the user from the userinfo endpoint.
- */
 public class CustomClaimConverter implements Converter<Map<String, Object>, Map<String, Object>> {
 
     private final BearerTokenResolver bearerTokenResolver = new DefaultBearerTokenResolver();
@@ -39,8 +36,6 @@ public class CustomClaimConverter implements Converter<Map<String, Object>, Map<
 
     private final ClientRegistration registration;
 
-    // See https://github.com/jhipster/generator-jhipster/issues/18868
-    // We don't use a distributed cache or the user selected cache implementation here on purpose
     private final Cache<String, ObjectNode> users = Caffeine
         .newBuilder()
         .maximumSize(10_000)
@@ -55,18 +50,15 @@ public class CustomClaimConverter implements Converter<Map<String, Object>, Map<
 
     public Map<String, Object> convert(Map<String, Object> claims) {
         Map<String, Object> convertedClaims = this.delegate.convert(claims);
-        // Only look up user information if identity claims are missing
         if (claims.containsKey("given_name") && claims.containsKey("family_name")) {
             return convertedClaims;
         }
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
         if (attributes instanceof ServletRequestAttributes) {
-            // Retrieve and set the token
             String token = bearerTokenResolver.resolve(((ServletRequestAttributes) attributes).getRequest());
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", buildBearer(token));
 
-            // Retrieve user info from OAuth provider if not already loaded
             ObjectNode user = users.get(
                 claims.get("sub").toString(),
                 s -> {
@@ -80,7 +72,6 @@ public class CustomClaimConverter implements Converter<Map<String, Object>, Map<
                 }
             );
 
-            // Add custom claims
             if (user != null) {
                 convertedClaims.put("preferred_username", user.get("preferred_username").asText());
                 if (user.has("given_name")) {
@@ -92,7 +83,6 @@ public class CustomClaimConverter implements Converter<Map<String, Object>, Map<
                 if (user.has("email")) {
                     convertedClaims.put("email", user.get("email").asText());
                 }
-                // Allow full name in a name claim - happens with Auth0
                 if (user.has("name")) {
                     String[] name = user.get("name").asText().split("\\s+");
                     if (name.length > 0) {

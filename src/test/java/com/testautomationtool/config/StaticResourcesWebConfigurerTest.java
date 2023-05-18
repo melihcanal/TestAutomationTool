@@ -1,6 +1,7 @@
 package com.testautomationtool.config;
 
-import static com.testautomationtool.config.StaticResourcesWebConfiguration.*;
+import static com.testautomationtool.config.StaticResourcesWebConfiguration.RESOURCE_LOCATIONS;
+import static com.testautomationtool.config.StaticResourcesWebConfiguration.RESOURCE_PATHS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 

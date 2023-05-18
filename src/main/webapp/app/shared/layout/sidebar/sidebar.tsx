@@ -1,6 +1,6 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import { BsPlay, BsPencil, BsGrid3X3Gap, BsGear } from 'react-icons/bs';
+import { BsGear, BsGrid3X3Gap, BsPencil, BsPlay } from 'react-icons/bs';
 import './sidebar.scss';
 
 const Sidebar = () => {

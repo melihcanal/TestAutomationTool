@@ -1,8 +1,5 @@
 package com.testautomationtool.domain.enumeration;
 
-/**
- * The ActionType enumeration.
- */
 public enum ActionType {
     CLICK,
     SEND_KEYS,

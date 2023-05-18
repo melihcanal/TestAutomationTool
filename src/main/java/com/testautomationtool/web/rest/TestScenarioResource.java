@@ -1,7 +1,10 @@
 package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.TestScenario;
+import com.testautomationtool.domain.User;
 import com.testautomationtool.repository.TestScenarioRepository;
+import com.testautomationtool.security.SecurityUtils;
+import com.testautomationtool.service.UserService;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,7 +13,9 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +38,9 @@ public class TestScenarioResource {
     private String applicationName;
 
     private final TestScenarioRepository testScenarioRepository;
+
+    @Autowired
+    private UserService userService;
 
     public TestScenarioResource(TestScenarioRepository testScenarioRepository) {
         this.testScenarioRepository = testScenarioRepository;
@@ -60,6 +68,13 @@ public class TestScenarioResource {
         @RequestBody TestScenario testScenario
     ) throws URISyntaxException {
         log.debug("REST request to update TestScenario : {}, {}", id, testScenario);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+        Optional<TestScenario> scenario = testScenarioRepository.findById(id);
+        if (!userService.userHasAdminRole(userByLogin) && scenario.isPresent() && !scenario.get().getUser().getLogin().equals(login)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         if (testScenario.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -84,6 +99,14 @@ public class TestScenarioResource {
         @RequestBody TestScenario testScenario
     ) throws URISyntaxException {
         log.debug("REST request to partial update TestScenario partially : {}, {}", id, testScenario);
+
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+        Optional<TestScenario> scenario = testScenarioRepository.findById(id);
+        if (!userService.userHasAdminRole(userByLogin) && scenario.isPresent() && !scenario.get().getUser().getLogin().equals(login)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         if (testScenario.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -137,25 +160,50 @@ public class TestScenarioResource {
     }
 
     @GetMapping("/test-scenarios")
-    public List<TestScenario> getAllTestScenarios() {
+    public ResponseEntity<List<TestScenario>> getAllTestScenarios() {
         log.debug("REST request to get all TestScenarios");
-        return testScenarioRepository.findAll();
+        return new ResponseEntity<>(testScenarioRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/test-scenarios/{id}")
     public ResponseEntity<TestScenario> getTestScenario(@PathVariable Long id) {
         log.debug("REST request to get TestScenario : {}", id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
         Optional<TestScenario> testScenario = testScenarioRepository.findById(id);
+
+        if (
+            !userService.userHasAdminRole(userByLogin) && testScenario.isPresent() && !testScenario.get().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         return ResponseUtil.wrapOrNotFound(testScenario);
     }
 
     @DeleteMapping("/test-scenarios/{id}")
     public ResponseEntity<Void> deleteTestScenario(@PathVariable Long id) {
         log.debug("REST request to delete TestScenario : {}", id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User userByLogin = userService.getUserByLogin(login).orElse(null);
+        Optional<TestScenario> testScenario = testScenarioRepository.findById(id);
+
+        if (
+            !userService.userHasAdminRole(userByLogin) && testScenario.isPresent() && !testScenario.get().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         testScenarioRepository.deleteById(id);
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/test-scenarios/user")
+    public List<TestScenario> getTestScenariosByCurrentUser() {
+        log.debug("REST request to get TestScenarios by current user");
+        return testScenarioRepository.findByUserIsCurrentUser();
     }
 }

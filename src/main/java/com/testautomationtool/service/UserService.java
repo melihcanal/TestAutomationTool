@@ -237,4 +237,15 @@ public class UserService {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
         }
     }
+
+    public boolean userHasAdminRole(User user) {
+        if (user != null && user.getAuthorities() != null) {
+            for (Authority authority : user.getAuthorities()) {
+                if (authority.getName().equals("ROLE_ADMIN")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -1,8 +1,6 @@
 package com.testautomationtool.web.rest;
 
-import static com.testautomationtool.test.util.OAuth2TestUtil.TEST_USER_LOGIN;
-import static com.testautomationtool.test.util.OAuth2TestUtil.registerAuthenticationToken;
-import static com.testautomationtool.test.util.OAuth2TestUtil.testAuthenticationToken;
+import static com.testautomationtool.test.util.OAuth2TestUtil.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

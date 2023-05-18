@@ -23,6 +23,11 @@ export const getEntities = createAsyncThunk('testScenario/fetch_entity_list', as
   return axios.get<ITestScenario[]>(requestUrl);
 });
 
+export const getEntitiesByCurrentUser = createAsyncThunk('testScenario/fetch_entity_list_by_current_user', async () => {
+  const requestUrl = `${apiUrl}/user`;
+  return axios.get<ITestScenario[]>(requestUrl);
+});
+
 export const getEntity = createAsyncThunk(
   'testScenario/fetch_entity',
   async (id: string | number) => {
@@ -36,7 +41,7 @@ export const createEntity = createAsyncThunk(
   'testScenario/create_entity',
   async (entity: ITestScenario, thunkAPI) => {
     const result = await axios.post<ITestScenario>(apiUrl, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
+    thunkAPI.dispatch(getEntitiesByCurrentUser());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -46,7 +51,7 @@ export const updateEntity = createAsyncThunk(
   'testScenario/update_entity',
   async (entity: ITestScenario, thunkAPI) => {
     const result = await axios.put<ITestScenario>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
+    thunkAPI.dispatch(getEntitiesByCurrentUser());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -56,7 +61,7 @@ export const partialUpdateEntity = createAsyncThunk(
   'testScenario/partial_update_entity',
   async (entity: ITestScenario, thunkAPI) => {
     const result = await axios.patch<ITestScenario>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
-    thunkAPI.dispatch(getEntities({}));
+    thunkAPI.dispatch(getEntitiesByCurrentUser());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -67,7 +72,7 @@ export const deleteEntity = createAsyncThunk(
   async (id: string | number, thunkAPI) => {
     const requestUrl = `${apiUrl}/${id}`;
     const result = await axios.delete<ITestScenario>(requestUrl);
-    thunkAPI.dispatch(getEntities({}));
+    thunkAPI.dispatch(getEntitiesByCurrentUser());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -89,7 +94,7 @@ export const TestScenarioSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getEntitiesByCurrentUser), (state, action) => {
         const { data } = action.payload;
 
         return {
@@ -104,7 +109,7 @@ export const TestScenarioSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = action.payload.data;
       })
-      .addMatcher(isPending(getEntities, getEntity), state => {
+      .addMatcher(isPending(getEntities, getEntity, getEntitiesByCurrentUser), state => {
         state.errorMessage = null;
         state.updateSuccess = false;
         state.loading = true;

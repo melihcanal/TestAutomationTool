@@ -4,14 +4,14 @@ import sinon from 'sinon';
 import configureStore from 'redux-mock-store';
 
 import authentication, {
-  getSession,
-  getAccount,
-  logoutServer,
-  clearAuthentication,
-  logout,
   authError,
   clearAuth,
+  clearAuthentication,
+  getAccount,
+  getSession,
   initialState,
+  logout,
+  logoutServer,
 } from 'app/shared/reducers/authentication';
 
 describe('Authentication reducer tests', () => {

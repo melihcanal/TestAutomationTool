@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -52,7 +53,8 @@ public class TestScenario extends AbstractAuditingEntity<Long> implements Serial
     @JsonIgnoreProperties(value = { "testScenario" }, allowSetters = true)
     private List<StepDefinition> stepDefinitions = new ArrayList<>();
 
-    @ManyToOne
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     public Long getId() {

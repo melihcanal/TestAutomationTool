@@ -5,6 +5,7 @@ import com.testautomationtool.domain.enumeration.ActionType;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -49,7 +50,8 @@ public class StepDefinition extends AbstractAuditingEntity<Long> implements Seri
     @Column(name = "expected")
     private String expected;
 
-    @ManyToOne
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "testExecutions", "stepDefinitions", "user" }, allowSetters = true)
     private TestScenario testScenario;
 

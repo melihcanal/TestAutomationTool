@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtGrantedAuthorityConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
-    public JwtGrantedAuthorityConverter() {
-        // Bean extracting authority.
-    }
+    public JwtGrantedAuthorityConverter() {}
 
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
