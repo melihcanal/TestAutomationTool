@@ -24,6 +24,8 @@ public class FileOperations {
 
     private final Logger log = LoggerFactory.getLogger(FileOperations.class);
 
+    public FileOperations() {}
+
     public void removeJsonFile() {
         log.debug("Removing existing step definition file");
         try {
@@ -62,7 +64,7 @@ public class FileOperations {
         }
     }
 
-    public boolean copySerenityReportFile(Long testExecutionId) {
+    public void copySerenityReportFile(Long testExecutionId) {
         log.debug("Copying serenity report files to resource directory");
         try {
             File sourceDir = new File("../TestRunner/target/site/serenity");
@@ -74,10 +76,8 @@ public class FileOperations {
             } else {
                 log.debug("Copy operation is failed");
             }
-            return result;
         } catch (IOException exception) {
             log.error("IOException while copying files:", exception);
-            return false;
         }
     }
 }

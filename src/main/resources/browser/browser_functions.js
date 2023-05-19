@@ -81,10 +81,10 @@ const getElementByXpath = xpath => {
 
 //stopRecordingTestScenario
 (function () {
+  let events = JSON.parse(sessionStorage.getItem('events'));
   events.forEach(e => delete e.nodeName);
   console.save(JSON.stringify(events, null, 4));
-  events = [];
-  console.log('stopRecordingTestScenario js function');
+  sessionStorage.setItem('events', JSON.stringify([]));
 })();
 
 //windowListeners

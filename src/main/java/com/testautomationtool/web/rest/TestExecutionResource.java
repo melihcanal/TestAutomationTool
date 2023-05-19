@@ -240,14 +240,14 @@ public class TestExecutionResource {
         TestExecution save = testExecutionRepository.saveAndFlush(testExecution);
         Long testExecutionId = save.getId();
         String stepDefinitionListJson = JsonConverter.convertStepDefinitionListToJson(testScenario.getStepDefinitions());
+
         try (FileWriter fileWriter = new FileWriter("src/main/resources/browser/test_execution_prepare.json")) {
             fileWriter.write(stepDefinitionListJson);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // TODO: return this method
-        boolean success = fileOperations.copyJsonFileToExecuteTest();
-        if (success) {
+
+        if (fileOperations.copyJsonFileToExecuteTest()) {
             Thread thread = new Thread(new ShellCommand("mvn.cmd clean verify", testExecutionId));
             thread.start();
         } else {

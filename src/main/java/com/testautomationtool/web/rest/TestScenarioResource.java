@@ -71,6 +71,7 @@ public class TestScenarioResource {
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
         Optional<TestScenario> scenario = testScenarioRepository.findById(id);
+
         if (!userService.userHasAdminRole(userByLogin) && scenario.isPresent() && !scenario.get().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }

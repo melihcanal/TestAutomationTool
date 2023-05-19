@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 
 public class JavascriptInjector extends Thread {
 
+    private volatile boolean running = true;
     private final JavascriptExecutor jsExecutor;
     private final WebDriver webDriver;
     private final Map<String, String> jsFunctions;
@@ -32,7 +33,7 @@ public class JavascriptInjector extends Thread {
     @Override
     public void run() {
         String prevUrl, currentUrl = webDriver.getCurrentUrl();
-        for (int i = 0; i < 300; i++) {
+        while (running) {
             prevUrl = currentUrl;
             currentUrl = webDriver.getCurrentUrl();
             if (!prevUrl.equals(currentUrl)) {
@@ -50,11 +51,14 @@ public class JavascriptInjector extends Thread {
                     jsFunctions.get("windowListeners")
                 );
             }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            if (Thread.currentThread().isInterrupted()) {
+                break;
             }
+            TimeUtil.waitForTime(1000);
         }
+    }
+
+    public void stopThread() {
+        running = false;
     }
 }

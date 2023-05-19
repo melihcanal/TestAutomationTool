@@ -2,22 +2,18 @@ package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.StepDefinition;
 import com.testautomationtool.domain.TestScenario;
+import com.testautomationtool.domain.User;
 import com.testautomationtool.domain.request.StepDefinitionRequest;
 import com.testautomationtool.repository.StepDefinitionRepository;
-import com.testautomationtool.util.FileOperations;
-import com.testautomationtool.util.JavascriptInjector;
-import com.testautomationtool.util.ReadData;
+import com.testautomationtool.security.SecurityUtils;
+import com.testautomationtool.service.UserService;
+import com.testautomationtool.service.WebDriverService;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +38,14 @@ public class StepDefinitionResource {
 
     private static final String ENTITY_NAME = "stepDefinition";
 
-    private final Map<String, String> jsFunctions = ReadData.readJsFunctions();
-
-    private WebDriver webDriver;
-
-    private JavascriptExecutor jsExecutor;
-
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     @Autowired
-    private FileOperations fileOperations;
+    private UserService userService;
+
+    @Autowired
+    private WebDriverService webDriverService;
 
     private final StepDefinitionRepository stepDefinitionRepository;
 
@@ -97,6 +90,14 @@ public class StepDefinitionResource {
         @RequestBody StepDefinition stepDefinition
     ) {
         log.debug("REST request to update StepDefinition : {}, {}", id, stepDefinition);
+
+        Optional<StepDefinition> step = stepDefinitionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User user = userService.getUserByLogin(login).orElse(null);
+
+        if (!userService.userHasAdminRole(user) && step.isPresent() && !step.get().getTestScenario().getUser().getLogin().equals(login)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         if (stepDefinition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -121,6 +122,14 @@ public class StepDefinitionResource {
         @RequestBody StepDefinition stepDefinition
     ) {
         log.debug("REST request to partial update StepDefinition partially : {}, {}", id, stepDefinition);
+
+        Optional<StepDefinition> step = stepDefinitionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User user = userService.getUserByLogin(login).orElse(null);
+
+        if (!userService.userHasAdminRole(user) && step.isPresent() && !step.get().getTestScenario().getUser().getLogin().equals(login)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         if (stepDefinition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
@@ -197,13 +206,37 @@ public class StepDefinitionResource {
     @GetMapping("/step-definitions/{id}")
     public ResponseEntity<StepDefinition> getStepDefinition(@PathVariable Long id) {
         log.debug("REST request to get StepDefinition : {}", id);
+
         Optional<StepDefinition> stepDefinition = stepDefinitionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User user = userService.getUserByLogin(login).orElse(null);
+
+        if (
+            !userService.userHasAdminRole(user) &&
+            stepDefinition.isPresent() &&
+            !stepDefinition.get().getTestScenario().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
         return ResponseUtil.wrapOrNotFound(stepDefinition);
     }
 
     @DeleteMapping("/step-definitions/{id}")
     public ResponseEntity<Void> deleteStepDefinition(@PathVariable Long id) {
         log.debug("REST request to delete StepDefinition : {}", id);
+
+        Optional<StepDefinition> stepDefinition = stepDefinitionRepository.findById(id);
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        User user = userService.getUserByLogin(login).orElse(null);
+
+        if (
+            !userService.userHasAdminRole(user) &&
+            stepDefinition.isPresent() &&
+            !stepDefinition.get().getTestScenario().getUser().getLogin().equals(login)
+        ) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
         stepDefinitionRepository.deleteById(id);
         return ResponseEntity
             .noContent()
@@ -214,23 +247,7 @@ public class StepDefinitionResource {
     @GetMapping("/step-definitions/record-start")
     public ResponseEntity<Void> startRecordingTestScenario(@RequestParam("url") String url) {
         log.debug("Recording test scenario...");
-        fileOperations.removeJsonFile();
-
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/browser/chromedriver.exe");
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized --remote-allow-origins=*");
-        webDriver = new ChromeDriver(options);
-        jsExecutor = (JavascriptExecutor) webDriver;
-        log.debug("DRIVER OK");
-        webDriver.get(url);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        jsExecutor.executeScript(jsFunctions.get("setSessionVariables"));
-        JavascriptInjector injector = new JavascriptInjector(jsExecutor, webDriver, jsFunctions);
-        injector.start();
+        webDriverService.startWebDriver(url);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -239,11 +256,7 @@ public class StepDefinitionResource {
     public ResponseEntity<List<StepDefinition>> stopRecordingTestScenario() {
         log.debug("Stopping to record test scenario...");
 
-        jsExecutor.executeScript(jsFunctions.get("stopRecordingTestScenario"));
-
-        webDriver.close();
-
-        List<StepDefinition> fileContent = fileOperations.completeFileOperations();
+        List<StepDefinition> fileContent = webDriverService.stopWebDriver();
 
         // TODO: record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
 
