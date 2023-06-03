@@ -1,0 +1,14 @@
+[
+  {
+    "actionType": "GO_TO_URL",
+    "url": "https://www.google.com"
+  },
+  {
+    "actionType": "CLICK",
+    "xpathOrCssSelector": "(//input[@value='Kendimi Şanslı Hissediyorum'])[last()]"
+  },
+  {
+    "actionType": "SCROLL",
+    "scrollTop": 500
+  }
+]

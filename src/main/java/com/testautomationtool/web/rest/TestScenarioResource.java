@@ -66,8 +66,9 @@ public class TestScenarioResource {
     public ResponseEntity<TestScenario> updateTestScenario(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody TestScenario testScenario
-    ) throws URISyntaxException {
+    ) {
         log.debug("REST request to update TestScenario : {}, {}", id, testScenario);
+
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
         Optional<TestScenario> scenario = testScenarioRepository.findById(id);
@@ -98,7 +99,7 @@ public class TestScenarioResource {
     public ResponseEntity<TestScenario> partialUpdateTestScenario(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody TestScenario testScenario
-    ) throws URISyntaxException {
+    ) {
         log.debug("REST request to partial update TestScenario partially : {}, {}", id, testScenario);
 
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);

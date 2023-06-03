@@ -59,8 +59,8 @@ class TestScenarioResourceIT {
     private static final String ENTITY_API_URL = "/api/test-scenarios";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
-    private static Random random = new Random();
-    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
+    private static final Random random = new Random();
+    private static final AtomicLong count = new AtomicLong(random.nextInt() + (2L * Integer.MAX_VALUE));
 
     @Autowired
     private TestScenarioRepository testScenarioRepository;
@@ -73,14 +73,8 @@ class TestScenarioResourceIT {
 
     private TestScenario testScenario;
 
-    /**
-     * Create an entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
-     */
     public static TestScenario createEntity(EntityManager em) {
-        TestScenario testScenario = new TestScenario()
+        return new TestScenario()
             .title(DEFAULT_TITLE)
             .description(DEFAULT_DESCRIPTION)
             .numberOfExecution(DEFAULT_NUMBER_OF_EXECUTION)
@@ -90,17 +84,10 @@ class TestScenarioResourceIT {
             .createdDate(DEFAULT_CREATED_DATE)
             .lastModifiedBy(DEFAULT_LAST_MODIFIED_BY)
             .lastModifiedDate(DEFAULT_LAST_MODIFIED_DATE);
-        return testScenario;
     }
 
-    /**
-     * Create an updated entity for this test.
-     *
-     * This is a static method, as tests for other entities might also need it,
-     * if they test an entity which requires the current entity.
-     */
     public static TestScenario createUpdatedEntity(EntityManager em) {
-        TestScenario testScenario = new TestScenario()
+        return new TestScenario()
             .title(UPDATED_TITLE)
             .description(UPDATED_DESCRIPTION)
             .numberOfExecution(UPDATED_NUMBER_OF_EXECUTION)
@@ -110,7 +97,6 @@ class TestScenarioResourceIT {
             .createdDate(UPDATED_CREATED_DATE)
             .lastModifiedBy(UPDATED_LAST_MODIFIED_BY)
             .lastModifiedDate(UPDATED_LAST_MODIFIED_DATE);
-        return testScenario;
     }
 
     @BeforeEach
@@ -122,7 +108,6 @@ class TestScenarioResourceIT {
     @Transactional
     void createTestScenario() throws Exception {
         int databaseSizeBeforeCreate = testScenarioRepository.findAll().size();
-        // Create the TestScenario
         restTestScenarioMockMvc
             .perform(
                 post(ENTITY_API_URL)
@@ -132,7 +117,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isCreated());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeCreate + 1);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
@@ -150,12 +134,10 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void createTestScenarioWithExistingId() throws Exception {
-        // Create the TestScenario with an existing ID
         testScenario.setId(1L);
 
         int databaseSizeBeforeCreate = testScenarioRepository.findAll().size();
 
-        // An entity with an existing ID cannot be created, so this API call must fail
         restTestScenarioMockMvc
             .perform(
                 post(ENTITY_API_URL)
@@ -165,7 +147,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeCreate);
     }
@@ -173,10 +154,8 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void getAllTestScenarios() throws Exception {
-        // Initialize the database
         testScenarioRepository.saveAndFlush(testScenario);
 
-        // Get all the testScenarioList
         restTestScenarioMockMvc
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
@@ -196,10 +175,8 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void getTestScenario() throws Exception {
-        // Initialize the database
         testScenarioRepository.saveAndFlush(testScenario);
 
-        // Get the testScenario
         restTestScenarioMockMvc
             .perform(get(ENTITY_API_URL_ID, testScenario.getId()))
             .andExpect(status().isOk())
@@ -219,21 +196,18 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void getNonExistingTestScenario() throws Exception {
-        // Get the testScenario
         restTestScenarioMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
     void putExistingTestScenario() throws Exception {
-        // Initialize the database
         testScenarioRepository.saveAndFlush(testScenario);
 
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
 
-        // Update the testScenario
         TestScenario updatedTestScenario = testScenarioRepository.findById(testScenario.getId()).get();
-        // Disconnect from session so that the updates on updatedTestScenario are not directly saved in db
+
         em.detach(updatedTestScenario);
         updatedTestScenario
             .title(UPDATED_TITLE)
@@ -255,7 +229,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isOk());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
@@ -276,7 +249,6 @@ class TestScenarioResourceIT {
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
         testScenario.setId(count.incrementAndGet());
 
-        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTestScenarioMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, testScenario.getId())
@@ -286,7 +258,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
     }
@@ -297,7 +268,6 @@ class TestScenarioResourceIT {
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
         testScenario.setId(count.incrementAndGet());
 
-        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTestScenarioMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
@@ -307,7 +277,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
     }
@@ -318,7 +287,6 @@ class TestScenarioResourceIT {
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
         testScenario.setId(count.incrementAndGet());
 
-        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTestScenarioMockMvc
             .perform(
                 put(ENTITY_API_URL)
@@ -328,7 +296,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isMethodNotAllowed());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
     }
@@ -336,12 +303,10 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void partialUpdateTestScenarioWithPatch() throws Exception {
-        // Initialize the database
         testScenarioRepository.saveAndFlush(testScenario);
 
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
 
-        // Update the testScenario using partial update
         TestScenario partialUpdatedTestScenario = new TestScenario();
         partialUpdatedTestScenario.setId(testScenario.getId());
 
@@ -361,7 +326,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isOk());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
@@ -379,12 +343,10 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void fullUpdateTestScenarioWithPatch() throws Exception {
-        // Initialize the database
         testScenarioRepository.saveAndFlush(testScenario);
 
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
 
-        // Update the testScenario using partial update
         TestScenario partialUpdatedTestScenario = new TestScenario();
         partialUpdatedTestScenario.setId(testScenario.getId());
 
@@ -408,7 +370,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isOk());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
         TestScenario testTestScenario = testScenarioList.get(testScenarioList.size() - 1);
@@ -429,7 +390,6 @@ class TestScenarioResourceIT {
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
         testScenario.setId(count.incrementAndGet());
 
-        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTestScenarioMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, testScenario.getId())
@@ -439,7 +399,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
     }
@@ -450,7 +409,6 @@ class TestScenarioResourceIT {
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
         testScenario.setId(count.incrementAndGet());
 
-        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTestScenarioMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
@@ -460,7 +418,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
     }
@@ -471,7 +428,6 @@ class TestScenarioResourceIT {
         int databaseSizeBeforeUpdate = testScenarioRepository.findAll().size();
         testScenario.setId(count.incrementAndGet());
 
-        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTestScenarioMockMvc
             .perform(
                 patch(ENTITY_API_URL)
@@ -481,7 +437,6 @@ class TestScenarioResourceIT {
             )
             .andExpect(status().isMethodNotAllowed());
 
-        // Validate the TestScenario in the database
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeUpdate);
     }
@@ -489,17 +444,14 @@ class TestScenarioResourceIT {
     @Test
     @Transactional
     void deleteTestScenario() throws Exception {
-        // Initialize the database
         testScenarioRepository.saveAndFlush(testScenario);
 
         int databaseSizeBeforeDelete = testScenarioRepository.findAll().size();
 
-        // Delete the testScenario
         restTestScenarioMockMvc
             .perform(delete(ENTITY_API_URL_ID, testScenario.getId()).with(csrf()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
-        // Validate the database contains one less item
         List<TestScenario> testScenarioList = testScenarioRepository.findAll();
         assertThat(testScenarioList).hasSize(databaseSizeBeforeDelete - 1);
     }

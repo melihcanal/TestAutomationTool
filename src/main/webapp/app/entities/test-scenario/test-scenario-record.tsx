@@ -10,13 +10,22 @@ import { IStepDefinitionRequest } from 'app/shared/request/step-definition-reque
 import { ValidatedField, ValidatedForm } from 'react-jhipster';
 import { isValidURL } from 'app/shared/util/url-utils';
 import 'app/shared/css/common-style.scss';
+import StepDefinitionDialog from 'app/entities/step-definition/step-definition-dialog';
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
 
   const { id } = useParams<'id'>();
 
-  const [startPage, setStartPage] = useState(null);
+  const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
+  const loading = useAppSelector(state => state.stepDefinition.loading);
+  const currentTestScenario = useAppSelector(state => state.testScenario.entity);
+
+  const [rows, setRows] = useState(null);
+  const [firstStep, setFirstStep] = useState(null);
+  const [valueFromDialogBox, setValueFromDialogBox] = useState(null);
+  const [showComponent, setShowComponent] = useState(false);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     dispatch(reset());
@@ -26,21 +35,45 @@ export const TestScenarioRecord = () => {
     dispatch(getEntity(id));
   }, []);
 
-  const stepDefinitionList = useAppSelector(state => state.stepDefinition.entities);
-  const loading = useAppSelector(state => state.stepDefinition.loading);
-  const testScenario = useAppSelector(state => state.testScenario.entity);
+  useEffect(() => {
+    if (valueFromDialogBox) {
+      const newRow = { ...valueFromDialogBox };
+      setRows(prevRows => {
+        const updatedRows = [...prevRows];
+        updatedRows.splice(index + 1, 0, newRow);
+        return updatedRows;
+      });
+    }
+  }, [valueFromDialogBox]);
+
+  useEffect(() => {
+    setRows(stepDefinitionList);
+  }, [stepDefinitionList]);
 
   const setUrl = values => {
     if (values.url !== undefined && isValidURL(values.url)) {
-      const firstStep: IStepDefinition = { ...values };
-      setStartPage(firstStep);
+      const step: IStepDefinition = { ...values, testScenario: currentTestScenario };
+      setFirstStep(step);
     } else {
       window.alert('Please enter a valid URL');
     }
   };
 
+  const handleShowDialogBox = (i: number) => {
+    setIndex(i);
+    setShowComponent(true);
+  };
+
+  const handleHideDialogBox = () => {
+    setShowComponent(false);
+  };
+
+  const handleDialogBoxValue = value => {
+    setValueFromDialogBox(value);
+  };
+
   const startRecording = () => {
-    dispatch(startWebDriver(startPage.url));
+    dispatch(startWebDriver(firstStep.url));
   };
 
   const stopRecording = () => {
@@ -49,10 +82,10 @@ export const TestScenarioRecord = () => {
 
   const saveTestScenario = () => {
     const list: IStepDefinition[] = [];
-    list.push(startPage);
-    stepDefinitionList.forEach(stepDefinition => {
+    list.push(firstStep);
+    rows.forEach(stepDefinition => {
       const obj: IStepDefinition = { ...stepDefinition };
-      obj.testScenario = testScenario;
+      obj.testScenario = currentTestScenario;
       list.push(obj);
     });
     const request: IStepDefinitionRequest = { stepDefinitionList: list };
@@ -63,7 +96,8 @@ export const TestScenarioRecord = () => {
 
   return (
     <div>
-      {startPage && startPage.url !== undefined ? (
+      <StepDefinitionDialog isOpen={showComponent} addValidationStep={handleDialogBoxValue} showDialogBox={handleHideDialogBox} />
+      {firstStep && firstStep.url !== undefined ? (
         <div>
           <div className="d-flex justify-content-start record-buttons">
             <Button className="me-2" color="info" onClick={startRecording}>
@@ -90,24 +124,24 @@ export const TestScenarioRecord = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {stepDefinitionList.map((stepDefinition, i) => (
-                    <tr key={`entity-${i}`} data-cy="entityTable">
-                      <td>{stepDefinition.actionType}</td>
-                      <td>{stepDefinition.message}</td>
-                      <td>{stepDefinition.xpathOrCssSelector}</td>
-                      <td>{stepDefinition.keyword}</td>
-                      <td>{stepDefinition.scrollLeft}</td>
-                      <td>{stepDefinition.scrollTop}</td>
-                      <td>{stepDefinition.url}</td>
-                      <td>{stepDefinition.expected}</td>
-                      <td className="text-end">
-                        <div className="btn-group flex-btn-group-container">
-                          <Button color="danger" size="sm" data-cy="entityDeleteButton">
-                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                  {rows.map((stepDefinition, i) => (
+                    <React.Fragment key={stepDefinition.id}>
+                      <tr key={`entity-${i}`} data-cy="entityTable">
+                        <td>{stepDefinition.actionType}</td>
+                        <td>{stepDefinition.message}</td>
+                        <td>{stepDefinition.xpathOrCssSelector}</td>
+                        <td>{stepDefinition.keyword}</td>
+                        <td>{stepDefinition.scrollLeft}</td>
+                        <td>{stepDefinition.scrollTop}</td>
+                        <td>{stepDefinition.url}</td>
+                        <td>{stepDefinition.expected}</td>
+                        <td className="text-end">
+                          <Button color="primary" onClick={() => handleShowDialogBox(i)}>
+                            Add Row
                           </Button>
-                        </div>
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </Table>
