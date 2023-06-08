@@ -35,6 +35,11 @@ export const stopWebDriver = createAsyncThunk('stepDefinition/stop_web_driver', 
   return axios.get<IStepDefinition[]>(requestUrl);
 });
 
+export const cancelWebDriver = createAsyncThunk('stepDefinition/cancel_web_driver', async () => {
+  const requestUrl = `${apiUrl}/record-cancel`;
+  return axios.get<void>(requestUrl);
+});
+
 export const saveStepDefinitions = createAsyncThunk(
   'stepDefinition/save_step_definitions',
   async (entities: IStepDefinitionRequest, thunkAPI) => {

@@ -60,8 +60,13 @@ public class WebDriverService {
         injector.stopThread();
 
         TimeUtil.waitForTime(2000);
-        webDriver.close();
+        webDriver.quit();
 
         return fileOperations.completeFileOperations();
+    }
+
+    public void cancelWebDriver() {
+        injector.stopThread();
+        webDriver.quit();
     }
 }

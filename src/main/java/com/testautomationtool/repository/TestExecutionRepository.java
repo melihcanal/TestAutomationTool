@@ -14,4 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TestExecutionRepository extends JpaRepository<TestExecution, Long> {
     List<TestExecution> findByTestScenario(TestScenario testScenario);
+
+    void deleteByTestScenario(TestScenario testScenario);
 }

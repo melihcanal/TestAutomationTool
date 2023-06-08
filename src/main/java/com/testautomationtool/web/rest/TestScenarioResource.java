@@ -2,6 +2,8 @@ package com.testautomationtool.web.rest;
 
 import com.testautomationtool.domain.TestScenario;
 import com.testautomationtool.domain.User;
+import com.testautomationtool.repository.StepDefinitionRepository;
+import com.testautomationtool.repository.TestExecutionRepository;
 import com.testautomationtool.repository.TestScenarioRepository;
 import com.testautomationtool.security.SecurityUtils;
 import com.testautomationtool.service.UserService;
@@ -38,6 +40,12 @@ public class TestScenarioResource {
     private String applicationName;
 
     private final TestScenarioRepository testScenarioRepository;
+
+    @Autowired
+    private TestExecutionRepository testExecutionRepository;
+
+    @Autowired
+    private StepDefinitionRepository stepDefinitionRepository;
 
     @Autowired
     private UserService userService;
@@ -188,15 +196,16 @@ public class TestScenarioResource {
         log.debug("REST request to delete TestScenario : {}", id);
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
-        Optional<TestScenario> testScenario = testScenarioRepository.findById(id);
+        TestScenario testScenario = testScenarioRepository.findById(id).orElseThrow();
 
-        if (
-            !userService.userHasAdminRole(userByLogin) && testScenario.isPresent() && !testScenario.get().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(userByLogin) && !testScenario.getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
+        stepDefinitionRepository.deleteByTestScenario(testScenario);
+        testExecutionRepository.deleteByTestScenario(testScenario);
         testScenarioRepository.deleteById(id);
+
         return ResponseEntity
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))

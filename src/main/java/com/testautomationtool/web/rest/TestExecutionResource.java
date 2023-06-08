@@ -239,6 +239,7 @@ public class TestExecutionResource {
         testExecution.setTestScenario(testScenario);
         TestExecution save = testExecutionRepository.saveAndFlush(testExecution);
         Long testExecutionId = save.getId();
+        //save.setReportUrl();
         String stepDefinitionListJson = JsonConverter.convertStepDefinitionListToJson(testScenario.getStepDefinitions());
 
         try (FileWriter fileWriter = new FileWriter("src/main/resources/browser/test_execution_prepare.json")) {
@@ -251,7 +252,9 @@ public class TestExecutionResource {
             Thread thread = new Thread(new ShellCommand("mvn.cmd clean verify", testExecutionId));
             thread.start();
         } else {
-            return new ResponseEntity<>(null, HttpStatus.FAILED_DEPENDENCY);
+            testExecution.setStatus(false);
+            save = testExecutionRepository.saveAndFlush(save);
+            return new ResponseEntity<>(save, HttpStatus.FAILED_DEPENDENCY);
         }
         return new ResponseEntity<>(save, HttpStatus.OK);
     }

@@ -91,11 +91,11 @@ public class StepDefinitionResource {
     ) {
         log.debug("REST request to update StepDefinition : {}, {}", id, stepDefinition);
 
-        Optional<StepDefinition> step = stepDefinitionRepository.findById(id);
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User user = userService.getUserByLogin(login).orElse(null);
+        StepDefinition step = stepDefinitionRepository.findById(id).orElseThrow();
 
-        if (!userService.userHasAdminRole(user) && step.isPresent() && !step.get().getTestScenario().getUser().getLogin().equals(login)) {
+        if (!userService.userHasAdminRole(user) && !step.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         if (stepDefinition.getId() == null) {
@@ -123,11 +123,11 @@ public class StepDefinitionResource {
     ) {
         log.debug("REST request to partial update StepDefinition partially : {}, {}", id, stepDefinition);
 
-        Optional<StepDefinition> step = stepDefinitionRepository.findById(id);
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User user = userService.getUserByLogin(login).orElse(null);
+        StepDefinition step = stepDefinitionRepository.findById(id).orElseThrow();
 
-        if (!userService.userHasAdminRole(user) && step.isPresent() && !step.get().getTestScenario().getUser().getLogin().equals(login)) {
+        if (!userService.userHasAdminRole(user) && !step.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         if (stepDefinition.getId() == null) {
@@ -225,15 +225,11 @@ public class StepDefinitionResource {
     public ResponseEntity<Void> deleteStepDefinition(@PathVariable Long id) {
         log.debug("REST request to delete StepDefinition : {}", id);
 
-        Optional<StepDefinition> stepDefinition = stepDefinitionRepository.findById(id);
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User user = userService.getUserByLogin(login).orElse(null);
+        StepDefinition stepDefinition = stepDefinitionRepository.findById(id).orElseThrow();
 
-        if (
-            !userService.userHasAdminRole(user) &&
-            stepDefinition.isPresent() &&
-            !stepDefinition.get().getTestScenario().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(user) && !stepDefinition.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
@@ -261,5 +257,13 @@ public class StepDefinitionResource {
         // TODO: record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
 
         return new ResponseEntity<>(fileContent, HttpStatus.OK);
+    }
+
+    @GetMapping("/step-definitions/record-cancel")
+    public ResponseEntity<Void> cancelRecordingTestScenario() {
+        log.debug("Cancelling test scenario...");
+        webDriverService.cancelWebDriver();
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

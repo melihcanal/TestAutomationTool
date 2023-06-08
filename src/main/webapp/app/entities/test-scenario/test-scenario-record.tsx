@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'reactstrap';
-import { reset, saveStepDefinitions, startWebDriver, stopWebDriver } from 'app/entities/step-definition/step-definition.reducer';
+import {
+  cancelWebDriver,
+  reset,
+  saveStepDefinitions,
+  startWebDriver,
+  stopWebDriver,
+} from 'app/entities/step-definition/step-definition.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
 import { IStepDefinition } from 'app/shared/model/step-definition.model';
 import { IStepDefinitionRequest } from 'app/shared/request/step-definition-request';
@@ -14,6 +20,7 @@ import StepDefinitionDialog from 'app/entities/step-definition/step-definition-d
 
 export const TestScenarioRecord = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const { id } = useParams<'id'>();
 
@@ -21,7 +28,10 @@ export const TestScenarioRecord = () => {
   const loading = useAppSelector(state => state.stepDefinition.loading);
   const currentTestScenario = useAppSelector(state => state.testScenario.entity);
 
-  const [rows, setRows] = useState(null);
+  const [recordStarted, setRecordStarted] = useState(false);
+  const [recordFinished, setRecordFinished] = useState(false);
+
+  const [rows, setRows] = useState([]);
   const [firstStep, setFirstStep] = useState(null);
   const [valueFromDialogBox, setValueFromDialogBox] = useState(null);
   const [showComponent, setShowComponent] = useState(false);
@@ -47,7 +57,7 @@ export const TestScenarioRecord = () => {
   }, [valueFromDialogBox]);
 
   useEffect(() => {
-    setRows(stepDefinitionList);
+    if (stepDefinitionList.length > 0) setRows([firstStep, ...stepDefinitionList]);
   }, [stepDefinitionList]);
 
   const setUrl = values => {
@@ -74,15 +84,16 @@ export const TestScenarioRecord = () => {
 
   const startRecording = () => {
     dispatch(startWebDriver(firstStep.url));
+    setRecordStarted(true);
   };
 
   const stopRecording = () => {
     dispatch(stopWebDriver());
+    setRecordFinished(true);
   };
 
   const saveTestScenario = () => {
     const list: IStepDefinition[] = [];
-    list.push(firstStep);
     rows.forEach(stepDefinition => {
       const obj: IStepDefinition = { ...stepDefinition };
       obj.testScenario = currentTestScenario;
@@ -90,9 +101,13 @@ export const TestScenarioRecord = () => {
     });
     const request: IStepDefinitionRequest = { stepDefinitionList: list };
     dispatch(saveStepDefinitions(request));
+    navigate(`/test-scenario/${currentTestScenario.id}`);
   };
 
-  const cancelRecording = () => {};
+  const cancelRecording = () => {
+    dispatch(cancelWebDriver());
+    navigate(`/test-scenario/${currentTestScenario.id}`);
+  };
 
   return (
     <div>
@@ -100,15 +115,15 @@ export const TestScenarioRecord = () => {
       {firstStep && firstStep.url !== undefined ? (
         <div>
           <div className="d-flex justify-content-start record-buttons">
-            <Button className="me-2" color="info" onClick={startRecording}>
+            <Button className="me-2" color="info" disabled={recordStarted} onClick={startRecording}>
               Start Recording
             </Button>
-            <Button className="me-2" color="danger" onClick={stopRecording}>
+            <Button className="me-2" color="danger" disabled={!recordStarted || recordFinished} onClick={stopRecording}>
               Stop Recording
             </Button>
           </div>
           <div className="table-responsive">
-            {stepDefinitionList && stepDefinitionList.length > 0 ? (
+            {rows && rows.length > 0 ? (
               <Table responsive>
                 <thead>
                   <tr>
@@ -150,10 +165,10 @@ export const TestScenarioRecord = () => {
             )}
           </div>
           <div className="d-flex justify-content-start">
-            <Button className="me-2" color="info" onClick={saveTestScenario}>
+            <Button className="me-2" color="info" onClick={saveTestScenario} disabled={!recordFinished}>
               Save
             </Button>
-            <Button className="me-2" color="danger" onClick={cancelRecording}>
+            <Button className="me-2" color="danger" onClick={cancelRecording} disabled={!recordStarted}>
               Cancel
             </Button>
           </div>

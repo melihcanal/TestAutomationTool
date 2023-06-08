@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StepDefinitionRepository extends JpaRepository<StepDefinition, Long> {
     List<StepDefinition> findByTestScenario(TestScenario testScenario);
+
+    void deleteByTestScenario(TestScenario testScenario);
 }
