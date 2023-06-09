@@ -8,11 +8,8 @@ import com.testautomationtool.repository.TestScenarioRepository;
 import com.testautomationtool.security.SecurityUtils;
 import com.testautomationtool.service.UserService;
 import com.testautomationtool.util.FileOperations;
-import com.testautomationtool.util.JsonConverter;
 import com.testautomationtool.util.ShellCommand;
 import com.testautomationtool.web.rest.errors.BadRequestAlertException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -84,15 +81,11 @@ public class TestExecutionResource {
     ) {
         log.debug("REST request to update TestExecution : {}, {}", id, testExecution);
 
-        Optional<TestExecution> execution = testExecutionRepository.findById(id);
+        TestExecution execution = testExecutionRepository.findById(id).orElseThrow();
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
 
-        if (
-            !userService.userHasAdminRole(userByLogin) &&
-            execution.isPresent() &&
-            !execution.get().getTestScenario().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(userByLogin) && !execution.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         if (testExecution.getId() == null) {

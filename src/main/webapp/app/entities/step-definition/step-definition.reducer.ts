@@ -25,20 +25,32 @@ export const getEntities = createAsyncThunk('stepDefinition/fetch_entity_list', 
   return axios.get<IStepDefinition[]>(requestUrl);
 });
 
-export const startWebDriver = createAsyncThunk('stepDefinition/start_web_driver', async (url: string | null) => {
-  const requestUrl = `${apiUrl}/record-start?url=${url}`;
-  return axios.get<void>(requestUrl);
-});
+export const startWebDriver = createAsyncThunk(
+  'stepDefinition/start_web_driver',
+  async (url: string | null) => {
+    const requestUrl = `${apiUrl}/record-start?url=${url}`;
+    return axios.get<void>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
 
-export const stopWebDriver = createAsyncThunk('stepDefinition/stop_web_driver', async () => {
-  const requestUrl = `${apiUrl}/record-stop`;
-  return axios.get<IStepDefinition[]>(requestUrl);
-});
+export const stopWebDriver = createAsyncThunk(
+  'stepDefinition/stop_web_driver',
+  async () => {
+    const requestUrl = `${apiUrl}/record-stop`;
+    return axios.get<IStepDefinition[]>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
 
-export const cancelWebDriver = createAsyncThunk('stepDefinition/cancel_web_driver', async () => {
-  const requestUrl = `${apiUrl}/record-cancel`;
-  return axios.get<void>(requestUrl);
-});
+export const cancelWebDriver = createAsyncThunk(
+  'stepDefinition/cancel_web_driver',
+  async () => {
+    const requestUrl = `${apiUrl}/record-cancel`;
+    return axios.get<void>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
 
 export const saveStepDefinitions = createAsyncThunk(
   'stepDefinition/save_step_definitions',

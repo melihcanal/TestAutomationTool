@@ -23,10 +23,14 @@ export const getEntities = createAsyncThunk('testScenario/fetch_entity_list', as
   return axios.get<ITestScenario[]>(requestUrl);
 });
 
-export const getEntitiesByCurrentUser = createAsyncThunk('testScenario/fetch_entity_list_by_current_user', async () => {
-  const requestUrl = `${apiUrl}/user`;
-  return axios.get<ITestScenario[]>(requestUrl);
-});
+export const getEntitiesByCurrentUser = createAsyncThunk(
+  'testScenario/fetch_entity_list_by_current_user',
+  async () => {
+    const requestUrl = `${apiUrl}/user`;
+    return axios.get<ITestScenario[]>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
 
 export const getEntity = createAsyncThunk(
   'testScenario/fetch_entity',
