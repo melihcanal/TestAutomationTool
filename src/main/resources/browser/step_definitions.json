@@ -1,14 +1,10 @@
 [
   {
-    "actionType": "GO_TO_URL",
-    "url": "https://www.google.com"
+    "actionType": "HOVER",
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]"
   },
   {
     "actionType": "CLICK",
-    "xpathOrCssSelector": "(//input[@value='Kendimi Şanslı Hissediyorum'])[last()]"
-  },
-  {
-    "actionType": "SCROLL",
-    "scrollTop": 500
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]"
   }
 ]

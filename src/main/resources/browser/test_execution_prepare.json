@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "actionType": "NAVIGATE_TO",
+    "url": "https://www.google.com"
+  },
+  {
+    "actionType": "HOVER",
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]"
+  },
+  {
+    "actionType": "CLICK",
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]"
+  }
+]

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Button, Col, Container, Row, Table } from 'reactstrap';
 import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleCheck, faFolderOpen, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -212,8 +213,6 @@ export const TestScenarioDetail = () => {
                         <th>Report Url</th>
                         <th>Created By</th>
                         <th>Created Date</th>
-                        <th>Last Modified By</th>
-                        <th>Last Modified Date</th>
                         <th />
                       </tr>
                     </thead>
@@ -221,9 +220,21 @@ export const TestScenarioDetail = () => {
                       {testExecutionList.map((testExecution, i) => (
                         <tr key={`entity-${i}`} data-cy="entityTable">
                           <td>{i + 1}</td>
-                          <td>{testExecution.status ? 'true' : 'false'}</td>
+                          <td>
+                            {testExecution.status ? (
+                              <div>
+                                <FontAwesomeIcon icon={faCircleCheck} />
+                              </div>
+                            ) : (
+                              <FontAwesomeIcon icon={faXmarkCircle} />
+                            )}
+                          </td>
                           <td>{testExecution.message}</td>
-                          <td>{testExecution.reportUrl}</td>
+                          <td>
+                            <Button className="me-2" color="info" onClick={() => window.open(testExecution.reportUrl, '_blank')}>
+                              <FontAwesomeIcon icon={faFolderOpen} /> Show Report
+                            </Button>
+                          </td>
                           <td>{testExecution.createdBy}</td>
                           <td>
                             {testExecution.createdDate ? (

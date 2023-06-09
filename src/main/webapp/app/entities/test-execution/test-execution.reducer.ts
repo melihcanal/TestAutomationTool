@@ -24,11 +24,6 @@ export const getEntities = createAsyncThunk('testExecution/fetch_entity_list', a
   return axios.get<ITestExecution[]>(requestUrl);
 });
 
-export const getTestExecutionReport = createAsyncThunk('testExecution/test_execution_report', async (id: string | number) => {
-  const requestUrl = `${apiUrl}/report/${id}`;
-  return axios.get(requestUrl);
-});
-
 export const executeTestScenario = createAsyncThunk(
   'testExecution/fetch_test_execution',
   async (id: string | number) => {

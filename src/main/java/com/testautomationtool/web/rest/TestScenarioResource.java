@@ -79,9 +79,9 @@ public class TestScenarioResource {
 
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
-        Optional<TestScenario> scenario = testScenarioRepository.findById(id);
+        TestScenario scenario = testScenarioRepository.findById(id).orElseThrow();
 
-        if (!userService.userHasAdminRole(userByLogin) && scenario.isPresent() && !scenario.get().getUser().getLogin().equals(login)) {
+        if (!userService.userHasAdminRole(userByLogin) && !scenario.getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
@@ -112,8 +112,9 @@ public class TestScenarioResource {
 
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
-        Optional<TestScenario> scenario = testScenarioRepository.findById(id);
-        if (!userService.userHasAdminRole(userByLogin) && scenario.isPresent() && !scenario.get().getUser().getLogin().equals(login)) {
+        TestScenario scenario = testScenarioRepository.findById(id).orElseThrow();
+
+        if (!userService.userHasAdminRole(userByLogin) && !scenario.getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
@@ -180,15 +181,13 @@ public class TestScenarioResource {
         log.debug("REST request to get TestScenario : {}", id);
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
-        Optional<TestScenario> testScenario = testScenarioRepository.findById(id);
+        TestScenario testScenario = testScenarioRepository.findById(id).orElseThrow();
 
-        if (
-            !userService.userHasAdminRole(userByLogin) && testScenario.isPresent() && !testScenario.get().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(userByLogin) && !testScenario.getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
-        return ResponseUtil.wrapOrNotFound(testScenario);
+        return ResponseUtil.wrapOrNotFound(Optional.of(testScenario));
     }
 
     @DeleteMapping("/test-scenarios/{id}")

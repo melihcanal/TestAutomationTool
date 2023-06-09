@@ -81,7 +81,7 @@ public class TestExecutionResource {
     public ResponseEntity<TestExecution> updateTestExecution(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody TestExecution testExecution
-    ) throws URISyntaxException {
+    ) {
         log.debug("REST request to update TestExecution : {}, {}", id, testExecution);
 
         Optional<TestExecution> execution = testExecutionRepository.findById(id);
@@ -117,18 +117,14 @@ public class TestExecutionResource {
     public ResponseEntity<TestExecution> partialUpdateTestExecution(
         @PathVariable(value = "id", required = false) final Long id,
         @RequestBody TestExecution testExecution
-    ) throws URISyntaxException {
+    ) {
         log.debug("REST request to partial update TestExecution partially : {}, {}", id, testExecution);
 
-        Optional<TestExecution> execution = testExecutionRepository.findById(id);
+        TestExecution execution = testExecutionRepository.findById(id).orElseThrow();
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
 
-        if (
-            !userService.userHasAdminRole(userByLogin) &&
-            execution.isPresent() &&
-            !execution.get().getTestScenario().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(userByLogin) && !execution.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
         if (testExecution.getId() == null) {
@@ -192,37 +188,38 @@ public class TestExecutionResource {
     @GetMapping("/test-executions/{id}")
     public ResponseEntity<TestExecution> getTestExecution(@PathVariable Long id) {
         log.debug("REST request to get TestExecution : {}", id);
-        Optional<TestExecution> testExecution = testExecutionRepository.findById(id);
+        TestExecution testExecution = testExecutionRepository.findById(id).orElseThrow();
 
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
 
-        if (
-            !userService.userHasAdminRole(userByLogin) &&
-            testExecution.isPresent() &&
-            !testExecution.get().getTestScenario().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(userByLogin) && !testExecution.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
 
-        return ResponseUtil.wrapOrNotFound(testExecution);
+        return ResponseUtil.wrapOrNotFound(Optional.of(testExecution));
     }
 
     @DeleteMapping("/test-executions/{id}")
     public ResponseEntity<Void> deleteTestExecution(@PathVariable Long id) {
         log.debug("REST request to delete TestExecution : {}", id);
 
-        Optional<TestExecution> execution = testExecutionRepository.findById(id);
+        TestExecution execution = testExecutionRepository.findById(id).orElseThrow();
         String login = SecurityUtils.getCurrentUserLogin().orElse(null);
         User userByLogin = userService.getUserByLogin(login).orElse(null);
 
-        if (
-            !userService.userHasAdminRole(userByLogin) &&
-            execution.isPresent() &&
-            !execution.get().getTestScenario().getUser().getLogin().equals(login)
-        ) {
+        if (!userService.userHasAdminRole(userByLogin) && !execution.getTestScenario().getUser().getLogin().equals(login)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
+
+        TestScenario testScenario = execution.getTestScenario();
+        testScenario.setNumberOfExecution(testScenario.getNumberOfExecution() - 1);
+        if (execution.getStatus()) {
+            testScenario.setNumberOfPassed(testScenario.getNumberOfPassed() - 1);
+        } else {
+            testScenario.setNumberOfFailed(testScenario.getNumberOfFailed() - 1);
+        }
+        testScenarioRepository.save(testScenario);
 
         testExecutionRepository.deleteById(id);
         return ResponseEntity
@@ -239,20 +236,28 @@ public class TestExecutionResource {
         testExecution.setTestScenario(testScenario);
         TestExecution save = testExecutionRepository.saveAndFlush(testExecution);
         Long testExecutionId = save.getId();
-        //save.setReportUrl();
-        String stepDefinitionListJson = JsonConverter.convertStepDefinitionListToJson(testScenario.getStepDefinitions());
 
-        try (FileWriter fileWriter = new FileWriter("src/main/resources/browser/test_execution_prepare.json")) {
-            fileWriter.write(stepDefinitionListJson);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fileOperations.createStepDefinitionJsonFile(testScenario.getStepDefinitions());
 
         if (fileOperations.copyJsonFileToExecuteTest()) {
             Thread thread = new Thread(new ShellCommand("mvn.cmd clean verify", testExecutionId));
             thread.start();
+
+            testScenario.setNumberOfExecution(testScenario.getNumberOfExecution() + 1);
+            testScenario.setNumberOfPassed(testScenario.getNumberOfPassed() + 1);
+            testScenarioRepository.save(testScenario);
+
+            save.setStatus(true);
+            save.setMessage("Success");
+            save.setReportUrl("/test-execution-report/" + testExecutionId + "/index.html");
+            save = testExecutionRepository.save(save);
         } else {
-            testExecution.setStatus(false);
+            testScenario.setNumberOfExecution(testScenario.getNumberOfExecution() + 1);
+            testScenario.setNumberOfFailed(testScenario.getNumberOfFailed() + 1);
+            testScenarioRepository.save(testScenario);
+
+            save.setStatus(false);
+            save.setMessage("Failed");
             save = testExecutionRepository.saveAndFlush(save);
             return new ResponseEntity<>(save, HttpStatus.FAILED_DEPENDENCY);
         }

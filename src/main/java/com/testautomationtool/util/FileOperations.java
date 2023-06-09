@@ -8,6 +8,7 @@ import com.testautomationtool.domain.StepDefinition;
 import com.testautomationtool.domain.typeadapter.StepDefinitionAdapter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -51,6 +52,16 @@ public class FileOperations {
         }
     }
 
+    public void createStepDefinitionJsonFile(List<StepDefinition> stepDefinitionList) {
+        String stepDefinitionListJson = JsonConverter.convertStepDefinitionListToJson(stepDefinitionList);
+
+        try (FileWriter fileWriter = new FileWriter("src/main/resources/browser/test_execution_prepare.json")) {
+            fileWriter.write(stepDefinitionListJson);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean copyJsonFileToExecuteTest() {
         log.debug("Copying step definition file to TestRunner directory");
         try {
@@ -68,9 +79,9 @@ public class FileOperations {
         log.debug("Copying serenity report files to resource directory");
         try {
             File sourceDir = new File("../TestRunner/target/site/serenity");
-            File targetDir = new File("src/main/resources/reports/serenity");
+            File targetDir = new File("src/main/resources/static/test-execution-report/serenity");
             FileUtils.copyDirectory(sourceDir, targetDir);
-            boolean result = targetDir.renameTo(new File("src/main/resources/reports/" + testExecutionId.toString()));
+            boolean result = targetDir.renameTo(new File("src/main/resources/static/test-execution-report/" + testExecutionId));
             if (result) {
                 log.debug("Copy operation is successful");
             } else {
