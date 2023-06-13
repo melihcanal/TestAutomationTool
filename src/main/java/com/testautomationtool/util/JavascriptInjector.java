@@ -16,8 +16,6 @@ public class JavascriptInjector extends Thread {
         this.webDriver = webDriver;
         this.jsFunctions = jsFunctions;
         this.jsExecutor.executeScript(
-                jsFunctions.get("getSessionVariables") +
-                '\n' +
                 jsFunctions.get("saveJson") +
                 '\n' +
                 jsFunctions.get("createXPathFromElement") +
@@ -38,8 +36,6 @@ public class JavascriptInjector extends Thread {
             currentUrl = webDriver.getCurrentUrl();
             if (!prevUrl.equals(currentUrl)) {
                 jsExecutor.executeScript(
-                    jsFunctions.get("getSessionVariables") +
-                    '\n' +
                     jsFunctions.get("saveJson") +
                     '\n' +
                     jsFunctions.get("createXPathFromElement") +
@@ -54,7 +50,7 @@ public class JavascriptInjector extends Thread {
             if (Thread.currentThread().isInterrupted()) {
                 break;
             }
-            TimeUtil.waitForTime(1000);
+            TimeUtil.waitForTime(200);
         }
     }
 

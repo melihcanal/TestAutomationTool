@@ -78,6 +78,13 @@ public class FileOperations {
     public void copySerenityReportFile(Long testExecutionId) {
         log.debug("Copying serenity report files to resource directory");
         try {
+            if (Files.exists(Paths.get("src/main/resources/static/test-execution-report/serenity"))) {
+                FileUtils.deleteDirectory(new File("src/main/resources/static/test-execution-report/serenity"));
+            }
+            if (Files.exists(Paths.get("src/main/resources/static/test-execution-report/" + testExecutionId))) {
+                FileUtils.deleteDirectory(new File("src/main/resources/static/test-execution-report/" + testExecutionId));
+            }
+
             File sourceDir = new File("../TestRunner/target/site/serenity");
             File targetDir = new File("src/main/resources/static/test-execution-report/serenity");
             FileUtils.copyDirectory(sourceDir, targetDir);

@@ -47,12 +47,10 @@ export const TestScenarioRecord = () => {
 
   useEffect(() => {
     if (valueFromDialogBox) {
-      const newRow = { ...valueFromDialogBox };
-      setRows(prevRows => {
-        const updatedRows = [...prevRows];
-        updatedRows.splice(index + 1, 0, newRow);
-        return updatedRows;
-      });
+      const newRow: IStepDefinition = { ...valueFromDialogBox };
+      const updatedRows: IStepDefinition[] = [...rows];
+      updatedRows.splice(index + 1, 0, newRow);
+      setRows(updatedRows);
     }
   }, [valueFromDialogBox]);
 
@@ -140,23 +138,21 @@ export const TestScenarioRecord = () => {
                 </thead>
                 <tbody>
                   {rows.map((stepDefinition, i) => (
-                    <React.Fragment key={stepDefinition.id}>
-                      <tr key={`entity-${i}`} data-cy="entityTable">
-                        <td>{stepDefinition.actionType}</td>
-                        <td>{stepDefinition.message}</td>
-                        <td>{stepDefinition.xpathOrCssSelector}</td>
-                        <td>{stepDefinition.keyword}</td>
-                        <td>{stepDefinition.scrollLeft}</td>
-                        <td>{stepDefinition.scrollTop}</td>
-                        <td>{stepDefinition.url}</td>
-                        <td>{stepDefinition.expected}</td>
-                        <td className="text-end">
-                          <Button color="primary" onClick={() => handleShowDialogBox(i)}>
-                            Add Row
-                          </Button>
-                        </td>
-                      </tr>
-                    </React.Fragment>
+                    <tr key={`entity-${i}`} data-cy="entityTable">
+                      <td>{stepDefinition.actionType}</td>
+                      <td>{stepDefinition.message}</td>
+                      <td>{stepDefinition.xpathOrCssSelector}</td>
+                      <td>{stepDefinition.keyword}</td>
+                      <td>{stepDefinition.scrollLeft}</td>
+                      <td>{stepDefinition.scrollTop}</td>
+                      <td>{stepDefinition.url}</td>
+                      <td>{stepDefinition.expected}</td>
+                      <td className="text-end">
+                        <Button color="primary" onClick={() => handleShowDialogBox(i)}>
+                          Add Row
+                        </Button>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </Table>

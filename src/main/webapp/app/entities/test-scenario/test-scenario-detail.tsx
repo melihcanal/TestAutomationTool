@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Container, Row, Table } from 'reactstrap';
 import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,6 +14,7 @@ import { getEntity } from 'app/entities/test-scenario/test-scenario.reducer';
 
 export const TestScenarioDetail = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const { id } = useParams<'id'>();
 
@@ -43,12 +44,13 @@ export const TestScenarioDetail = () => {
 
   const handleStartTest = () => {
     dispatch(executeTestScenario(testScenarioEntity.id));
+    navigate(`/test-scenario/${testScenarioEntity.id}`);
   };
 
   return (
     <div>
       <Row>
-        <Col md="3">
+        <Col>
           <h2 data-cy="testScenarioDetailsHeading">Test Scenario</h2>
           <dl className="jh-entity-details">
             <dt>
@@ -148,37 +150,6 @@ export const TestScenarioDetail = () => {
                         <td>{stepDefinition.scrollTop}</td>
                         <td>{stepDefinition.url}</td>
                         <td>{stepDefinition.expected}</td>
-                        <td className="text-end">
-                          <div className="btn-group flex-btn-group-container">
-                            <Button
-                              tag={Link}
-                              to={`/step-definition/${stepDefinition.id}`}
-                              color="info"
-                              size="sm"
-                              data-cy="entityDetailsButton"
-                            >
-                              <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                            </Button>
-                            <Button
-                              tag={Link}
-                              to={`/step-definition/${stepDefinition.id}/edit`}
-                              color="primary"
-                              size="sm"
-                              data-cy="entityEditButton"
-                            >
-                              <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                            </Button>
-                            <Button
-                              tag={Link}
-                              to={`/step-definition/${stepDefinition.id}/delete`}
-                              color="danger"
-                              size="sm"
-                              data-cy="entityDeleteButton"
-                            >
-                              <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                            </Button>
-                          </div>
-                        </td>
                       </tr>
                     ))}
                   </tbody>

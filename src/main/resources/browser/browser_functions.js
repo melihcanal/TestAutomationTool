@@ -1,10 +1,7 @@
 //setSessionVariables
 sessionStorage.setItem('events', JSON.stringify([]));
+sessionStorage.setItem('mouseEvents', JSON.stringify([]));
 sessionStorage.setItem('input', '');
-
-//getSessionVariables
-let events = JSON.parse(sessionStorage.getItem('events'));
-let input = sessionStorage.getItem('input');
 
 //saveJson
 (console => {
@@ -35,9 +32,6 @@ let input = sessionStorage.getItem('input');
 //createXPathFromElement
 const createXPathFromElement = el => {
   let nodeElem = el;
-  if (nodeElem && nodeElem.id) {
-    return '//*[@id="' + nodeElem.id + '"]';
-  }
   let parts = [];
   while (nodeElem && Node.ELEMENT_NODE === nodeElem.nodeType) {
     let nbOfPreviousSiblings = 0;
@@ -67,9 +61,10 @@ const createXPathFromElement = el => {
 
 //getLastInputElement
 const getLastInputElement = eventList => {
-  return eventList[eventList.length - 1].nodeName.toLowerCase() === 'input'
+  return eventList[eventList.length - 1].nodeName.toLowerCase() === 'input' ||
+    eventList[eventList.length - 1].nodeName.toLowerCase() === 'textarea'
     ? eventList[eventList.length - 1]
-    : eventList.length > 0
+    : eventList.length > 1
     ? getLastInputElement(eventList.slice(0, eventList.length - 1))
     : null;
 };
@@ -79,33 +74,11 @@ const getElementByXpath = xpath => {
   return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 };
 
-//stopRecordingTestScenario
-(function () {
-  let events = JSON.parse(sessionStorage.getItem('events'));
-  events.forEach(e => delete e.nodeName);
-  console.save(JSON.stringify(events, null, 4));
-  sessionStorage.setItem('events', JSON.stringify([]));
-})();
-
 //windowListeners
-let scrollTop = undefined;
-let scrollLeft = undefined;
-
-const checkScroll = () => {
-  if (scrollTop !== undefined) {
-    events.push({
-      actionType: 'SCROLL',
-      scrollTop: scrollTop,
-      scrollLeft: scrollLeft,
-    });
-    scrollTop = undefined;
-    scrollLeft = undefined;
-  }
-};
-
-onclick = event => {
-  checkScroll();
+const checkKeyboardInput = () => {
+  let input = sessionStorage.getItem('input');
   if (input !== '') {
+    let events = JSON.parse(sessionStorage.getItem('events'));
     const elem = getLastInputElement(events);
     events.push({
       actionType: 'SEND_KEYS',
@@ -113,8 +86,14 @@ onclick = event => {
       xpathOrCssSelector: elem.xpathOrCssSelector,
       keyword: getElementByXpath(elem.xpathOrCssSelector).value,
     });
-    input = '';
+    sessionStorage.setItem('input', '');
+    sessionStorage.setItem('events', JSON.stringify(events));
   }
+};
+
+onclick = event => {
+  checkKeyboardInput();
+  let events = JSON.parse(sessionStorage.getItem('events'));
   events.push({
     actionType: 'CLICK',
     nodeName: event.target.nodeName,
@@ -124,32 +103,50 @@ onclick = event => {
 };
 
 onkeydown = event => {
-  checkScroll();
-  if (event.key === 'Escape') {
-    events.forEach(e => delete e.nodeName);
-    console.save(JSON.stringify(events, null, 4));
-  }
+  let input = sessionStorage.getItem('input');
   input += event.key;
   sessionStorage.setItem('input', input);
 };
 
-const mouseEvents = [];
-
 onmousemove = event => {
-  checkScroll();
-  mouseEvents.push(event);
-  if (mouseEvents.length > 1 && mouseEvents[mouseEvents.length - 1].timeStamp - mouseEvents[mouseEvents.length - 2].timeStamp > 800) {
+  let mouseEvents = JSON.parse(sessionStorage.getItem('mouseEvents'));
+  mouseEvents.push({
+    timeStamp: event.timeStamp,
+    xpathOrCssSelector: createXPathFromElement(event.target),
+    nodeName: event.target.nodeName,
+  });
+  sessionStorage.setItem('mouseEvents', JSON.stringify(mouseEvents));
+  if (mouseEvents.length > 1 && mouseEvents[mouseEvents.length - 1].timeStamp - mouseEvents[mouseEvents.length - 2].timeStamp > 250) {
+    let events = JSON.parse(sessionStorage.getItem('events'));
     events.push({
       actionType: 'HOVER',
-      nodeName: mouseEvents[mouseEvents.length - 2].target.nodeName,
-      xpathOrCssSelector: createXPathFromElement(mouseEvents[mouseEvents.length - 2].target),
+      nodeName: mouseEvents[mouseEvents.length - 2].nodeName,
+      xpathOrCssSelector: mouseEvents[mouseEvents.length - 2].xpathOrCssSelector,
     });
+    sessionStorage.setItem('events', JSON.stringify(events));
   }
 };
 
 onscroll = () => {
-  scrollTop = document.documentElement.scrollTop;
-  scrollLeft = document.documentElement.scrollLeft;
+  let events = JSON.parse(sessionStorage.getItem('events'));
+  if (events[events.length - 1].actionType === 'SCROLL') {
+    events.pop();
+  }
+  events.push({
+    actionType: 'SCROLL',
+    nodeName: 'html',
+    scrollTop: document.documentElement.scrollTop,
+    scrollLeft: document.documentElement.scrollLeft,
+  });
+  sessionStorage.setItem('events', JSON.stringify(events));
 };
+
+//stopRecordingTestScenario
+(function () {
+  let events = JSON.parse(sessionStorage.getItem('events'));
+  events.forEach(e => delete e.nodeName);
+  console.save(JSON.stringify(events, null, 4));
+  sessionStorage.setItem('events', JSON.stringify([]));
+})();
 
 //

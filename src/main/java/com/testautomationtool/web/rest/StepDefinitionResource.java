@@ -254,8 +254,6 @@ public class StepDefinitionResource {
 
         List<StepDefinition> fileContent = webDriverService.stopWebDriver();
 
-        // TODO: record bittikten sonra ekrandan dogrulama adimlari (ekrandaki veriyi kiyaslama) ekle
-
         return new ResponseEntity<>(fileContent, HttpStatus.OK);
     }
 

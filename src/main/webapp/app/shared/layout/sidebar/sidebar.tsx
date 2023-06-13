@@ -15,13 +15,13 @@ const Sidebar = () => {
           <BsPencil className="sidebar-icon" />
           Record Test Scenario
         </Nav.Link>
+        <Nav.Link href="/step-definition/">
+          <BsGear className="sidebar-icon" />
+          Parameters
+        </Nav.Link>
         <Nav.Link href="#elements">
           <BsGrid3X3Gap className="sidebar-icon" />
           Elements
-        </Nav.Link>
-        <Nav.Link href="#parameters">
-          <BsGear className="sidebar-icon" />
-          Parameters
         </Nav.Link>
       </Nav>
     </div>
