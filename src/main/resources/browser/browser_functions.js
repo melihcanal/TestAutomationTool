@@ -84,7 +84,7 @@ const checkKeyboardInput = () => {
       actionType: 'SEND_KEYS',
       nodeName: elem.nodeName,
       xpathOrCssSelector: elem.xpathOrCssSelector,
-      keyword: getElementByXpath(elem.xpathOrCssSelector).value,
+      keyword: input,
     });
     sessionStorage.setItem('input', '');
     sessionStorage.setItem('events', JSON.stringify(events));
@@ -116,7 +116,7 @@ onmousemove = event => {
     nodeName: event.target.nodeName,
   });
   sessionStorage.setItem('mouseEvents', JSON.stringify(mouseEvents));
-  if (mouseEvents.length > 1 && mouseEvents[mouseEvents.length - 1].timeStamp - mouseEvents[mouseEvents.length - 2].timeStamp > 250) {
+  if (mouseEvents.length > 1 && mouseEvents[mouseEvents.length - 1].timeStamp - mouseEvents[mouseEvents.length - 2].timeStamp > 500) {
     let events = JSON.parse(sessionStorage.getItem('events'));
     events.push({
       actionType: 'HOVER',

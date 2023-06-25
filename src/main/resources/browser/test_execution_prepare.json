@@ -1,60 +1,42 @@
 [
   {
     "actionType": "NAVIGATE_TO",
-    "url": "https://www.sis.itu.edu.tr/"
+    "url": "https://www.google.com"
   },
   {
     "actionType": "CLICK",
-    "xpathOrCssSelector": "/html/body/div/div[3]/div/div/div[2]/a/p/img"
-  },
-  {
-    "actionType": "SCROLL",
-    "scrollLeft": 0,
-    "scrollTop": 815
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div"
   },
   {
     "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/div"
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div"
   },
   {
     "actionType": "CLICK",
-    "xpathOrCssSelector": "/html/body/div[1]/div[2]/div/div[2]/div[2]/div/table/tbody/tr/td/div/div/div/table/tbody/tr[2]/td[4]/div/div[2]/div[1]/a/div/div/div/div"
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/textarea"
   },
   {
     "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div[1]/div[2]/div/div[2]/div[2]/div/table/tbody/tr/td/div/div/div/table/tbody/tr[2]/td[4]/div/div[2]/div[1]/a/div/div/div/div"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[1]/div/div[2]/div[1]/div/div/div[2]/ul/li[4]/a/strong"
-  },
-  {
-    "actionType": "SCROLL",
-    "scrollLeft": 0,
-    "scrollTop": 0
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/ul"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/ul"
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/textarea"
   },
   {
     "actionType": "CLICK",
-    "xpathOrCssSelector": "/html/body/div/div[1]/div/div[2]/div[2]/div/div[1]/a[1]/img"
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]"
   },
   {
     "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/div[1]/div/div[3]/div"
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]"
+  },
+  {
+    "actionType": "CLICK",
+    "xpathOrCssSelector": "/html/body/div[1]/div[3]/form/div[1]/div[1]/div[4]/center/input[2]"
+  },
+  {
+    "actionType": "CLICK",
+    "xpathOrCssSelector": "/html/body/div[2]/div/div[1]/div[3]/ul/li[2]/div/div[1]/a/img"
   },
   {
     "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[3]"
+    "xpathOrCssSelector": "/html/body/div[2]/div/div[1]/div[3]/ul/li[2]/div/div[1]/a/img"
   }
 ]

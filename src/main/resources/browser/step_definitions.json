@@ -1,56 +1,32 @@
 [
   {
     "actionType": "CLICK",
-    "xpathOrCssSelector": "/html/body/div/div[3]/div/div/div[2]/a/p/img"
+    "xpathOrCssSelector": "/html/body/div[5]/div[1]/div[1]/div[2]/a[2]"
+  },
+  {
+    "actionType": "HOVER",
+    "xpathOrCssSelector": "/html/body/div[5]/div[1]/div[1]"
   },
   {
     "actionType": "SCROLL",
-    "scrollTop": 815,
+    "scrollTop": 574,
     "scrollLeft": 0
   },
   {
     "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/div"
-  },
-  {
-    "actionType": "CLICK",
-    "xpathOrCssSelector": "/html/body/div[1]/div[2]/div/div[2]/div[2]/div/table/tbody/tr/td/div/div/div/table/tbody/tr[2]/td[4]/div/div[2]/div[1]/a/div/div/div/div"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div[1]/div[2]/div/div[2]/div[2]/div/table/tbody/tr/td/div/div/div/table/tbody/tr[2]/td[4]/div/div[2]/div[1]/a/div/div/div/div"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[1]/div/div[2]/div[1]/div/div/div[2]/ul/li[4]/a/strong"
+    "xpathOrCssSelector": "/html/body/div[5]/div[1]/div[1]"
   },
   {
     "actionType": "SCROLL",
-    "scrollTop": 0,
+    "scrollTop": 1176,
     "scrollLeft": 0
   },
   {
     "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/ul"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/ul"
+    "xpathOrCssSelector": "/html/body/div[5]/div[1]/div[1]/ul[2]/li[1]"
   },
   {
     "actionType": "CLICK",
-    "xpathOrCssSelector": "/html/body/div/div[1]/div/div[2]/div[2]/div/div[1]/a[1]/img"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[2]/div[1]/div/div[3]/div"
-  },
-  {
-    "actionType": "HOVER",
-    "xpathOrCssSelector": "/html/body/div/div[3]"
+    "xpathOrCssSelector": "/html/body/div[4]/div/div/a[16]"
   }
 ]

@@ -26,9 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
-/**
- * REST controller for managing {@link com.testautomationtool.domain.TestExecution}.
- */
 @RestController
 @RequestMapping("/api")
 @Transactional
